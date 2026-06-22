@@ -303,3 +303,130 @@
 06-22 16:24:26 [INFO] uvicorn | Application shutdown complete.
 06-22 16:24:26 [INFO] uvicorn | Finished server process [5500]
 06-22 15:24:26 [INFO] uvicorn | Stopping reloader process [6352]
+06-22 18:02:15 [INFO] uvicorn | Will watch for changes in these directories: ['C:\\xiuxian3\\xiuxian3\\xiuxianserver']
+06-22 18:02:15 [INFO] uvicorn | Uvicorn running on http://0.0.0.0:1234 (Press CTRL+C to quit)
+06-22 18:02:15 [INFO] uvicorn | Started reloader process [3452] using WatchFiles
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=auto.cfg
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module include router module=修仙 tag=修仙
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.二手市场
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.保险箱
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙帮助
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙物品
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙界历史
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙百科
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.后台接口
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.宗门
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.对战
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.异火
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.异界虫洞
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.战斗日志
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.探险
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.数据库备份
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.武器
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.源库
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.玩家
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.称号
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.纳戒
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.背包
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.装备
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.贸易服务
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.铭刻
+06-22 19:02:15 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.首领
+06-22 19:02:15 [INFO] uvicorn | Started server process [3336]
+06-22 19:02:15 [INFO] uvicorn | Waiting for application startup.
+06-22 19:02:15 [SUCCESS] launch.mount | Loaded handler path=/ws/bot/{client_id}
+06-22 19:02:15 [SUCCESS] launch.lifespan | 成功添加定时同步任务 id=sect_war_generate_rewards
+06-22 19:02:15 [INFO] auto.cfg | 执行 FastAPICache 初始化
+06-22 19:02:15 [INFO] 修仙 | 执行 修仙数据库 启动
+06-22 19:02:15 [INFO] 修仙.修仙帮助 | 执行 修仙帮助站 启动 文档 33 份，组件 25 个
+06-22 19:02:16 [INFO] 修仙.修仙百科 | 执行 修仙百科 启动 知识 735 条
+06-22 19:02:16 [SUCCESS] launch.lifespan | FastAPI 服务启动成功
+06-22 19:02:16 [INFO] uvicorn | Application startup complete.
+06-22 19:02:55 [INFO] uvicorn | Shutting down
+06-22 19:02:55 [INFO] uvicorn | Waiting for application shutdown.
+06-22 19:02:55 [INFO] 修仙.数据库备份 | 跳过 修仙数据库 热重启备份
+06-22 19:02:55 [INFO] 修仙 | 执行 修仙数据库 关闭
+06-22 19:02:55 [INFO] uvicorn | Application shutdown complete.
+06-22 19:02:55 [INFO] uvicorn | Finished server process [3336]
+06-22 18:02:55 [INFO] uvicorn | Stopping reloader process [3452]
+06-22 18:04:07 [INFO] uvicorn | Will watch for changes in these directories: ['C:\\xiuxian3\\xiuxian3\\xiuxianserver']
+06-22 18:04:07 [INFO] uvicorn | Uvicorn running on http://0.0.0.0:1234 (Press CTRL+C to quit)
+06-22 18:04:07 [INFO] uvicorn | Started reloader process [12056] using WatchFiles
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=auto.cfg
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module include router module=修仙 tag=修仙
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.二手市场
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.保险箱
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙帮助
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙物品
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙界历史
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙百科
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.后台接口
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.宗门
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.对战
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.异火
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.异界虫洞
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.战斗日志
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.探险
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.数据库备份
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.武器
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.源库
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.玩家
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.称号
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.纳戒
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.背包
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.装备
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.贸易服务
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.铭刻
+06-22 19:04:07 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.首领
+06-22 19:04:07 [INFO] uvicorn | Started server process [10144]
+06-22 19:04:07 [INFO] uvicorn | Waiting for application startup.
+06-22 19:04:07 [SUCCESS] launch.mount | Loaded handler path=/ws/bot/{client_id}
+06-22 19:04:07 [SUCCESS] launch.lifespan | 成功添加定时同步任务 id=sect_war_generate_rewards
+06-22 19:04:07 [INFO] auto.cfg | 执行 FastAPICache 初始化
+06-22 19:04:07 [INFO] 修仙 | 执行 修仙数据库 启动
+06-22 19:04:07 [INFO] 修仙.修仙帮助 | 执行 修仙帮助站 启动 文档 33 份，组件 25 个
+06-22 19:04:07 [INFO] 修仙.修仙百科 | 执行 修仙百科 启动 知识 735 条
+06-22 19:04:07 [SUCCESS] launch.lifespan | FastAPI 服务启动成功
+06-22 19:04:07 [INFO] uvicorn | Application startup complete.
+06-22 19:04:38 [INFO] uvicorn | ('127.0.0.1', 58970) - "WebSocket /ws/bot/915CB72DE371EDFAE4E02BBF099D0384" [accepted]
+06-22 19:04:38 [INFO] uvicorn | connection open
+06-22 19:04:38 [SUCCESS] launch.adapter.ws.message | 收到消息 client=915CB72DE371EDFAE4E02BBF099D0384 body={'code': 202, 'type': 'text', 'message': '称号', 'request_id': '4353917d479747829d1bb1e4030a8ef5'}
+06-22 19:04:38 [SUCCESS] launch.adapter.ws.manager | 发送消息 client=915CB72DE371EDFAE4E02BBF099D0384 success=True body={"code": 202, "type": "markdown", "message": {"content": "【木易·无 Lv.1】\n🔴 通知：新手礼包待领｜今日签到待领\n> **称号**\n> 当前佩戴：无\n> 已拥有：0 / 56", "keyboard": {"content": {"rows": [{"buttons": [{"render_data": {"label": "称号列表", "visited_label": "称号列表", "style": 1}, "action": {"type": 1, "data": "称号列表", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "1"}, {"render_data": {"label": "称号图鉴", "visited_label": "称号图鉴", "style": 1}, "action": {"type": 1, "data": "称号图鉴", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "2"}, {"render_data": {"label": "称号卸下", "visited_label": "称号卸下", "style": 1}, "action": {"type": 1, "data": "称号卸下", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "3"}]}]}}}, "request_id": "4353917d479747829d1bb1e4030a8ef5"}
+06-22 19:04:45 [SUCCESS] launch.adapter.ws.message | 收到消息 client=915CB72DE371EDFAE4E02BBF099D0384 body={'code': 202, 'type': 'text', 'message': '称号列表', 'request_id': '8f60f8f6d235487aba8450878cb77bf3'}
+06-22 19:04:45 [SUCCESS] launch.adapter.ws.manager | 发送消息 client=915CB72DE371EDFAE4E02BBF099D0384 success=True body={"code": 202, "type": "markdown", "message": {"content": "【木易·无 Lv.1】\n🔴 通知：新手礼包待领｜今日签到待领\n> **称号列表**\n> ▸ 入门（0/5）\n> ❌ 初入仙途 · ❌ 问道初心 · ❌ 半步金丹 · ❌ 元婴修士 · ❌ 天人合一\n> ▸ 签到（0/3）\n> ❌ 晨钟常客 · ❌ 风雨无阻 · ❌ 日夜兼程\n> ▸ 经济（0/7）\n> ❌ 小富即安 · ❌ 藏源有道 · ❌ 财气盈门 · ❌ 商路识途 · ❌ 腰缠万贯 · ❌ 富甲一方 · ❌ 跑商巨贾\n> ▸ 探险（0/4）\n> ❌ 探险常客 · ❌ 山河熟客 · ❌ 万险不惧 · ❌ 踏遍山河\n> ▸ 世界物资（0/9）\n> ❌ 丹火借道客 · ❌ 灯火续命人 · ❌ 护城搬山客 · ❌ 秘库经手人 · ❌ 战备供货人 · ❌ 看炉顺药人 · ❌ 垒城匠手 · ❌ 旧宝摸金者 · ❌ 镇妖战备客\n> ▸ 武器（0/10）\n> ❌ 兵器收藏家 · ❌ 百炼持刃 · ❌ 铸剑客 · ❌ 藏经归客 · ❌ 琢玉散人 · ❌ 欧气外露 · ❌ 满锋候选 · ❌ 多刃之主 · ❌ 七窍玲珑 · ❌ 淬锋达人\n> ▸ 战斗（0/9）\n> ❌ 虫洞先锋 · ❌ 虫洞鏖战者 · ❌ 虚空破壁人 · ❌ 岁时赴约人 · ❌ 情劫破阵者 · ❌ 岁寒知己 · ❌ 斗法胜手 · ❌ 独步一方 · ❌ 剑走偏锋\n> ▸ 铭刻（0/2）\n> ❌ 羽墨留名 · ❌ 万铭归一\n> ▸ 宗门（0/2）\n> ❌ 宗门弟子 · ❌ 门中翘楚\n> ▸ 特殊（0/5）\n> ❌ 睚眦必报 · ❌ 火种拾遗 · ❌ 寻宝人 · ❌ 市井掮客 · ❌ 散财有道", "keyboard": {"content": {"rows": [{"buttons": [{"render_data": {"label": "称号图鉴", "visited_label": "称号图鉴", "style": 1}, "action": {"type": 1, "data": "称号图鉴", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "1"}, {"render_data": {"label": "称号", "visited_label": "称号", "style": 1}, "action": {"type": 1, "data": "称号", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "2"}, {"render_data": {"label": "称号卸下", "visited_label": "称号卸下", "style": 1}, "action": {"type": 1, "data": "称号卸下", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "3"}]}]}}}, "request_id": "8f60f8f6d235487aba8450878cb77bf3"}
+06-22 19:04:54 [SUCCESS] launch.adapter.ws.message | 收到消息 client=915CB72DE371EDFAE4E02BBF099D0384 body={'code': 202, 'type': 'text', 'message': '称号图鉴', 'request_id': '154a5f7a2d464ed1973ef26b500b0ec2'}
+06-22 19:04:54 [SUCCESS] launch.adapter.ws.manager | 发送消息 client=915CB72DE371EDFAE4E02BBF099D0384 success=True body={"code": 202, "type": "markdown", "message": {"content": "【木易·无 Lv.1】\n🔴 通知：新手礼包待领｜今日签到待领\n> **称号图鉴**\n> 已解锁 0 / 56\n> ▸ 入门（0/5）\n> 🔒 初入仙途 — 创建修仙角色\n> 🔒 问道初心 — 等级达到 10\n> 🔒 半步金丹 — 等级达到 50\n> 🔒 元婴修士 — 等级达到 80\n> 🔒 天人合一 — 等级达到 100\n> ▸ 签到（0/3）\n> 🔒 晨钟常客 — 累计签到 7 次\n> 🔒 风雨无阻 — 累计签到 30 次\n> 🔒 日夜兼程 — 累计签到 100 次\n> ▸ 经济（0/7）\n> 🔒 小富即安 — 随身源石达到 5 万\n> 🔒 藏源有道 — 源库余额达到 10 万\n> 🔒 财气盈门 — 明面资产达到 30 万\n> 🔒 商路识途 — 跑商净利润达到 10 万\n> 🔒 腰缠万贯 — 随身源石达到 50 万\n> 🔒 富甲一方 — 总资产达到 200 万\n> 🔒 跑商巨贾 — 跑商净利润达到 50 万\n> ▸ 探险（0/4）\n> 🔒 探险常客 — 近况探险 ≥ 3 或累计 ≥ 5\n> 🔒 山河熟客 — 累计探险达到 30\n> 🔒 万险不惧 — 累计探险达到 100\n> 🔒 踏遍山河 — 累计探险达到 200\n> ▸ 世界物资（0/9）\n> 🔒 丹火借道客 — 近况回收药路 ≥ 3\n> 🔒 灯火续命人 — 近况回收民生 ≥ 3\n> 🔒 护城搬山客 — 近况回收建设 ≥ 3\n> 🔒 秘库经手人 — 近况回收古物 ≥ 2\n> 🔒 战备供货人 — 近况战利品出售 ≥ 3\n> 🔒 看炉顺药人 — 累计回收药路 ≥ 15\n> 🔒 垒城匠手 — 累计回收建设 ≥ 15\n> 🔒 旧宝摸金者 — 累计回收古物 ≥ 10\n> 🔒 镇妖战备客 — 累计回收战利品 ≥ 10\n> ▸ 武器（0/10）\n> 🔒 兵器收藏家 — 拥有武器 ≥ 5\n> 🔒 百炼持刃 — 最高武器等级 ≥ 40\n> 🔒 铸剑客 — 出售武器 ≥ 3\n> 🔒 藏经归客 — 出售技能书 ≥ 3\n> 🔒 琢玉散人 — 出售宝石 ≥ 3\n> 🔒 欧气外露 — 拥有稀品或珍品武器\n> 🔒 满锋候选 — 最高武器上限 ≥ 80\n> 🔒 多刃之主 — 拥有武器 ≥ 10\n> 🔒 七窍玲珑 — 装备全部开孔\n> 🔒 淬锋达人 — 武器淬锋 ≥ 3\n> ▸ 战斗（0/9）\n> 🔒 虫洞先锋 — 参与虫洞 ≥ 1\n> 🔒 虫洞鏖战者 — 虫洞累计伤害 ≥ 2 万\n> 🔒 虚空破壁人 — 参与虫洞 ≥ 10\n> 🔒 岁时赴约人 — 挑战首领 ≥ 1\n> 🔒 情劫破阵者 — 首领累计伤害 ≥ 2 万\n> 🔒 岁寒知己 — 挑战首领 ≥ 10\n> 🔒 斗法胜手 — 近况对战胜利 ≥ 2 或累计 ≥ 3\n> 🔒 独步一方 — 对战胜利 ≥ 15\n> 🔒 剑走偏锋 — 抢劫成功 ≥ 3\n> ▸ 铭刻（0/2）\n> 🔒 羽墨留名 — 铭刻 ≥ 1\n> 🔒 万铭归一 — 铭刻 ≥ 5\n> ▸ 宗门（0/2）\n> 🔒 宗门弟子 — 已加入宗门\n> 🔒 门中翘楚 — 宗门个人贡献 ≥ 5000\n> ▸ 特殊（0/5）\n> 🔒 睚眦必报 — 复仇成功\n> 🔒 火种拾遗 — 拥有 ≥ 1 种异火\n> 🔒 寻宝人 — 拾取过藏宝图\n> 🔒 市井掮客 — 二手市场成交 ≥ 10\n> 🔒 散财有道 — 二手市场支出 ≥ 30 万", "keyboard": {"content": {"rows": [{"buttons": [{"render_data": {"label": "称号", "visited_label": "称号", "style": 1}, "action": {"type": 1, "data": "称号", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "1"}, {"render_data": {"label": "称号列表", "visited_label": "称号列表", "style": 1}, "action": {"type": 1, "data": "称号列表", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "2"}, {"render_data": {"label": "称号卸下", "visited_label": "称号卸下", "style": 1}, "action": {"type": 1, "data": "称号卸下", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "3"}]}]}}}, "request_id": "154a5f7a2d464ed1973ef26b500b0ec2"}
+06-22 19:05:07 [SUCCESS] launch.adapter.ws.message | 收到消息 client=915CB72DE371EDFAE4E02BBF099D0384 body={'code': 202, 'type': 'text', 'message': '称号', 'request_id': 'f4a805b2956440e58b34232f7e539acc'}
+06-22 19:05:07 [SUCCESS] launch.adapter.ws.manager | 发送消息 client=915CB72DE371EDFAE4E02BBF099D0384 success=True body={"code": 202, "type": "markdown", "message": {"content": "【木易·无 Lv.1】\n🔴 通知：新手礼包待领｜今日签到待领\n> **称号**\n> 当前佩戴：无\n> 已拥有：0 / 56", "keyboard": {"content": {"rows": [{"buttons": [{"render_data": {"label": "称号列表", "visited_label": "称号列表", "style": 1}, "action": {"type": 1, "data": "称号列表", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "1"}, {"render_data": {"label": "称号图鉴", "visited_label": "称号图鉴", "style": 1}, "action": {"type": 1, "data": "称号图鉴", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "2"}, {"render_data": {"label": "称号卸下", "visited_label": "称号卸下", "style": 1}, "action": {"type": 1, "data": "称号卸下", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "3"}]}]}}}, "request_id": "f4a805b2956440e58b34232f7e539acc"}
+06-22 19:05:11 [SUCCESS] launch.adapter.ws.message | 收到消息 client=915CB72DE371EDFAE4E02BBF099D0384 body={'code': 202, 'type': 'text', 'message': '称号列表', 'request_id': '29a27727e4ee4964906f8e8d4914ea32'}
+06-22 19:05:11 [SUCCESS] launch.adapter.ws.manager | 发送消息 client=915CB72DE371EDFAE4E02BBF099D0384 success=True body={"code": 202, "type": "markdown", "message": {"content": "【木易·无 Lv.1】\n🔴 通知：新手礼包待领｜今日签到待领\n> **称号列表**\n> ▸ 入门（0/5）\n> ❌ 初入仙途 · ❌ 问道初心 · ❌ 半步金丹 · ❌ 元婴修士 · ❌ 天人合一\n> ▸ 签到（0/3）\n> ❌ 晨钟常客 · ❌ 风雨无阻 · ❌ 日夜兼程\n> ▸ 经济（0/7）\n> ❌ 小富即安 · ❌ 藏源有道 · ❌ 财气盈门 · ❌ 商路识途 · ❌ 腰缠万贯 · ❌ 富甲一方 · ❌ 跑商巨贾\n> ▸ 探险（0/4）\n> ❌ 探险常客 · ❌ 山河熟客 · ❌ 万险不惧 · ❌ 踏遍山河\n> ▸ 世界物资（0/9）\n> ❌ 丹火借道客 · ❌ 灯火续命人 · ❌ 护城搬山客 · ❌ 秘库经手人 · ❌ 战备供货人 · ❌ 看炉顺药人 · ❌ 垒城匠手 · ❌ 旧宝摸金者 · ❌ 镇妖战备客\n> ▸ 武器（0/10）\n> ❌ 兵器收藏家 · ❌ 百炼持刃 · ❌ 铸剑客 · ❌ 藏经归客 · ❌ 琢玉散人 · ❌ 欧气外露 · ❌ 满锋候选 · ❌ 多刃之主 · ❌ 七窍玲珑 · ❌ 淬锋达人\n> ▸ 战斗（0/9）\n> ❌ 虫洞先锋 · ❌ 虫洞鏖战者 · ❌ 虚空破壁人 · ❌ 岁时赴约人 · ❌ 情劫破阵者 · ❌ 岁寒知己 · ❌ 斗法胜手 · ❌ 独步一方 · ❌ 剑走偏锋\n> ▸ 铭刻（0/2）\n> ❌ 羽墨留名 · ❌ 万铭归一\n> ▸ 宗门（0/2）\n> ❌ 宗门弟子 · ❌ 门中翘楚\n> ▸ 特殊（0/5）\n> ❌ 睚眦必报 · ❌ 火种拾遗 · ❌ 寻宝人 · ❌ 市井掮客 · ❌ 散财有道", "keyboard": {"content": {"rows": [{"buttons": [{"render_data": {"label": "称号图鉴", "visited_label": "称号图鉴", "style": 1}, "action": {"type": 1, "data": "称号图鉴", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "1"}, {"render_data": {"label": "称号", "visited_label": "称号", "style": 1}, "action": {"type": 1, "data": "称号", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "2"}, {"render_data": {"label": "称号卸下", "visited_label": "称号卸下", "style": 1}, "action": {"type": 1, "data": "称号卸下", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "3"}]}]}}}, "request_id": "29a27727e4ee4964906f8e8d4914ea32"}
+06-22 19:05:16 [SUCCESS] launch.adapter.ws.message | 收到消息 client=915CB72DE371EDFAE4E02BBF099D0384 body={'code': 202, 'type': 'text', 'message': '称号图鉴', 'request_id': '018c065c58f94b34b2a5df8dc046e00c'}
+06-22 19:05:16 [SUCCESS] launch.adapter.ws.manager | 发送消息 client=915CB72DE371EDFAE4E02BBF099D0384 success=True body={"code": 202, "type": "markdown", "message": {"content": "【木易·无 Lv.1】\n🔴 通知：新手礼包待领｜今日签到待领\n> **称号图鉴**\n> 已解锁 0 / 56\n> ▸ 入门（0/5）\n> 🔒 初入仙途 — 创建修仙角色\n> 🔒 问道初心 — 等级达到 10\n> 🔒 半步金丹 — 等级达到 50\n> 🔒 元婴修士 — 等级达到 80\n> 🔒 天人合一 — 等级达到 100\n> ▸ 签到（0/3）\n> 🔒 晨钟常客 — 累计签到 7 次\n> 🔒 风雨无阻 — 累计签到 30 次\n> 🔒 日夜兼程 — 累计签到 100 次\n> ▸ 经济（0/7）\n> 🔒 小富即安 — 随身源石达到 5 万\n> 🔒 藏源有道 — 源库余额达到 10 万\n> 🔒 财气盈门 — 明面资产达到 30 万\n> 🔒 商路识途 — 跑商净利润达到 10 万\n> 🔒 腰缠万贯 — 随身源石达到 50 万\n> 🔒 富甲一方 — 总资产达到 200 万\n> 🔒 跑商巨贾 — 跑商净利润达到 50 万\n> ▸ 探险（0/4）\n> 🔒 探险常客 — 近况探险 ≥ 3 或累计 ≥ 5\n> 🔒 山河熟客 — 累计探险达到 30\n> 🔒 万险不惧 — 累计探险达到 100\n> 🔒 踏遍山河 — 累计探险达到 200\n> ▸ 世界物资（0/9）\n> 🔒 丹火借道客 — 近况回收药路 ≥ 3\n> 🔒 灯火续命人 — 近况回收民生 ≥ 3\n> 🔒 护城搬山客 — 近况回收建设 ≥ 3\n> 🔒 秘库经手人 — 近况回收古物 ≥ 2\n> 🔒 战备供货人 — 近况战利品出售 ≥ 3\n> 🔒 看炉顺药人 — 累计回收药路 ≥ 15\n> 🔒 垒城匠手 — 累计回收建设 ≥ 15\n> 🔒 旧宝摸金者 — 累计回收古物 ≥ 10\n> 🔒 镇妖战备客 — 累计回收战利品 ≥ 10\n> ▸ 武器（0/10）\n> 🔒 兵器收藏家 — 拥有武器 ≥ 5\n> 🔒 百炼持刃 — 最高武器等级 ≥ 40\n> 🔒 铸剑客 — 出售武器 ≥ 3\n> 🔒 藏经归客 — 出售技能书 ≥ 3\n> 🔒 琢玉散人 — 出售宝石 ≥ 3\n> 🔒 欧气外露 — 拥有稀品或珍品武器\n> 🔒 满锋候选 — 最高武器上限 ≥ 80\n> 🔒 多刃之主 — 拥有武器 ≥ 10\n> 🔒 七窍玲珑 — 装备全部开孔\n> 🔒 淬锋达人 — 武器淬锋 ≥ 3\n> ▸ 战斗（0/9）\n> 🔒 虫洞先锋 — 参与虫洞 ≥ 1\n> 🔒 虫洞鏖战者 — 虫洞累计伤害 ≥ 2 万\n> 🔒 虚空破壁人 — 参与虫洞 ≥ 10\n> 🔒 岁时赴约人 — 挑战首领 ≥ 1\n> 🔒 情劫破阵者 — 首领累计伤害 ≥ 2 万\n> 🔒 岁寒知己 — 挑战首领 ≥ 10\n> 🔒 斗法胜手 — 近况对战胜利 ≥ 2 或累计 ≥ 3\n> 🔒 独步一方 — 对战胜利 ≥ 15\n> 🔒 剑走偏锋 — 抢劫成功 ≥ 3\n> ▸ 铭刻（0/2）\n> 🔒 羽墨留名 — 铭刻 ≥ 1\n> 🔒 万铭归一 — 铭刻 ≥ 5\n> ▸ 宗门（0/2）\n> 🔒 宗门弟子 — 已加入宗门\n> 🔒 门中翘楚 — 宗门个人贡献 ≥ 5000\n> ▸ 特殊（0/5）\n> 🔒 睚眦必报 — 复仇成功\n> 🔒 火种拾遗 — 拥有 ≥ 1 种异火\n> 🔒 寻宝人 — 拾取过藏宝图\n> 🔒 市井掮客 — 二手市场成交 ≥ 10\n> 🔒 散财有道 — 二手市场支出 ≥ 30 万", "keyboard": {"content": {"rows": [{"buttons": [{"render_data": {"label": "称号", "visited_label": "称号", "style": 1}, "action": {"type": 1, "data": "称号", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "1"}, {"render_data": {"label": "称号列表", "visited_label": "称号列表", "style": 1}, "action": {"type": 1, "data": "称号列表", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "2"}, {"render_data": {"label": "称号卸下", "visited_label": "称号卸下", "style": 1}, "action": {"type": 1, "data": "称号卸下", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "3"}]}]}}}, "request_id": "018c065c58f94b34b2a5df8dc046e00c"}
+06-22 19:06:29 [INFO] uvicorn | ('127.0.0.1', 59045) - "WebSocket /ws/bot/C0FDB582B55542B9D07B10A5FDCECC96" [accepted]
+06-22 19:06:29 [INFO] uvicorn | connection open
+06-22 19:06:29 [SUCCESS] launch.adapter.ws.message | 收到消息 client=C0FDB582B55542B9D07B10A5FDCECC96 body={'code': 202, 'type': 'text', 'message': '你在做称号系统？', 'request_id': '029c28389cdc4baebe00605913460f9f'}
+06-22 19:06:38 [SUCCESS] launch.adapter.ws.message | 收到消息 client=C0FDB582B55542B9D07B10A5FDCECC96 body={'code': 202, 'type': 'text', 'message': '境界改了？元婴都来了', 'request_id': 'fdd252ce06474b71aa2b1791a5236e57'}
+06-22 19:06:48 [SUCCESS] launch.adapter.ws.message | 收到消息 client=C0FDB582B55542B9D07B10A5FDCECC96 body={'code': 202, 'type': 'text', 'message': 'lv就不符合了', 'request_id': 'e48ac4a264f747bbab0e65b52f459d46'}
+06-22 19:06:58 [SUCCESS] launch.adapter.ws.message | 收到消息 client=915CB72DE371EDFAE4E02BBF099D0384 body={'code': 202, 'type': 'text', 'message': '称号而已', 'request_id': 'b1b9de65278a4c6eba878b476fb8c0b5'}
+06-22 19:07:06 [SUCCESS] launch.adapter.ws.message | 收到消息 client=C0FDB582B55542B9D07B10A5FDCECC96 body={'code': 202, 'type': 'text', 'message': '嗯，也是', 'request_id': 'b49c685bd7d54199b7c514a86167a7e0'}
+06-22 19:07:09 [SUCCESS] launch.adapter.ws.message | 收到消息 client=C0FDB582B55542B9D07B10A5FDCECC96 body={'code': 202, 'type': 'text', 'message': '退出宗门', 'request_id': 'e219de2be582430c864fee7bf3a715ea'}
+06-22 19:07:09 [SUCCESS] launch.adapter.ws.manager | 发送消息 client=C0FDB582B55542B9D07B10A5FDCECC96 success=True body={"code": 202, "type": "markdown", "message": {"content": "【未建档】\n*你还没有创建用户。*\n发送：创建用户 名称，例如：创建用户 青衫客", "keyboard": {"content": {"rows": [{"buttons": [{"render_data": {"label": "指南", "visited_label": "指南", "style": 1}, "action": {"type": 1, "data": "指南", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "1"}, {"render_data": {"label": "帮助图", "visited_label": "帮助图", "style": 1}, "action": {"type": 1, "data": "修仙帮助", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "2"}, {"render_data": {"label": "宗门", "visited_label": "宗门", "style": 1}, "action": {"type": 1, "data": "宗门", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "3"}]}, {"buttons": [{"render_data": {"label": "宗门战", "visited_label": "宗门战", "style": 1}, "action": {"type": 1, "data": "宗门战", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "4"}, {"render_data": {"label": "领取宗门战奖励", "visited_label": "领取宗门战奖励", "style": 1}, "action": {"type": 1, "data": "领取宗门战奖励", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "5"}, {"render_data": {"label": "建立宗门", "visited_label": "建立宗门", "style": 1}, "action": {"type": 1, "data": "建立宗门", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "6"}]}]}}}, "request_id": "e219de2be582430c864fee7bf3a715ea"}
+06-22 19:07:11 [INFO] uvicorn | ('127.0.0.1', 59066) - "WebSocket /ws/bot/F22EE06417714EBB166FC483763572E4" [accepted]
+06-22 19:07:11 [INFO] uvicorn | connection open
+06-22 19:07:11 [SUCCESS] launch.adapter.ws.message | 收到消息 client=F22EE06417714EBB166FC483763572E4 body={'code': 202, 'type': 'text', 'message': '【咘咘谷·无 Lv.1】 🔴 通知：新手礼包待领｜今日签到待领 已退出宗门：仙仙。', 'request_id': '2fe1241951af4c65ac587fd3e2ba97c9'}
+06-22 19:07:12 [SUCCESS] launch.adapter.ws.message | 收到消息 client=915CB72DE371EDFAE4E02BBF099D0384 body={'code': 202, 'type': 'text', 'message': '后面还能改', 'request_id': '4717ef37e8bb40cdac524d18f75121e5'}
+06-22 19:07:16 [SUCCESS] launch.adapter.ws.message | 收到消息 client=915CB72DE371EDFAE4E02BBF099D0384 body={'code': 202, 'type': 'text', 'message': '整体没问题就行了', 'request_id': '5405d6282f164fe5b3136c3b239505b4'}
+06-22 19:07:21 [SUCCESS] launch.adapter.ws.message | 收到消息 client=C0FDB582B55542B9D07B10A5FDCECC96 body={'code': 202, 'type': 'text', 'message': '加入宗门 不老山', 'request_id': 'c5998fd80d434d53a3c33ae9f0191a75'}
+06-22 19:07:21 [SUCCESS] launch.adapter.ws.manager | 发送消息 client=C0FDB582B55542B9D07B10A5FDCECC96 success=True body={"code": 202, "type": "markdown", "message": {"content": "【未建档】\n*你还没有创建用户。*\n发送：创建用户 名称，例如：创建用户 青衫客", "keyboard": {"content": {"rows": [{"buttons": [{"render_data": {"label": "指南", "visited_label": "指南", "style": 1}, "action": {"type": 1, "data": "指南", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "1"}, {"render_data": {"label": "帮助图", "visited_label": "帮助图", "style": 1}, "action": {"type": 1, "data": "修仙帮助", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "2"}, {"render_data": {"label": "宗门", "visited_label": "宗门", "style": 1}, "action": {"type": 1, "data": "宗门", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "3"}]}, {"buttons": [{"render_data": {"label": "宗门战", "visited_label": "宗门战", "style": 1}, "action": {"type": 1, "data": "宗门战", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "4"}, {"render_data": {"label": "领取宗门战奖励", "visited_label": "领取宗门战奖励", "style": 1}, "action": {"type": 1, "data": "领取宗门战奖励", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "5"}, {"render_data": {"label": "建立宗门", "visited_label": "建立宗门", "style": 1}, "action": {"type": 1, "data": "建立宗门", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "6"}]}]}}}, "request_id": "c5998fd80d434d53a3c33ae9f0191a75"}
+06-22 19:07:23 [SUCCESS] launch.adapter.ws.message | 收到消息 client=F22EE06417714EBB166FC483763572E4 body={'code': 202, 'type': 'text', 'message': '【咘咘谷·无 Lv.1】 🔴 通知：新手礼包待领｜今日签到待领 *加入 不老山 需要到山门所在地。* 山门坐标：(2,6)，当前位置：荒野·镇妖司西北 (2,7)。', 'request_id': '18a00cc02615417c9f57304191f2b867'}
+06-22 19:07:25 [SUCCESS] launch.adapter.ws.message | 收到消息 client=C0FDB582B55542B9D07B10A5FDCECC96 body={'code': 202, 'type': 'text', 'message': '是可以', 'request_id': '32ee4909d7c848dc892f5b165bec820b'}
+06-22 19:07:49 [INFO] uvicorn | connection closed
+06-22 19:07:49 [INFO] uvicorn | connection closed
+06-22 19:07:49 [INFO] uvicorn | connection closed
+06-22 19:07:52 [INFO] uvicorn | Shutting down
+06-22 19:07:52 [INFO] uvicorn | Waiting for application shutdown.
+06-22 19:07:52 [INFO] 修仙.数据库备份 | 执行 修仙数据库 备份 path=C:\xiuxian3\xiuxian3\xiuxianserver\修仙\数据库备份\xiuxian_20260622_1907.db
+06-22 19:07:52 [INFO] 修仙 | 执行 修仙数据库 关闭
+06-22 19:07:52 [INFO] uvicorn | Application shutdown complete.
+06-22 19:07:52 [INFO] uvicorn | Finished server process [10144]
+06-22 18:07:53 [INFO] uvicorn | Stopping reloader process [12056]

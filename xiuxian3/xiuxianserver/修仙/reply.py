@@ -162,14 +162,10 @@ def _player_header(client_id: str, database: Any) -> str:
     """读取玩家头；未建档或数据库不可用时返回固定名称。"""
 
     try:
+        from .称号.service import service as title_service
+        title = title_service.current_display_title(client_id) or "无"
         row = database.fetch_one(
-            """
-            SELECT p.display_name, p.level, t.title
-            FROM players AS p
-            LEFT JOIN player_titles AS t
-              ON t.client_id = p.client_id AND t.active = 1
-            WHERE p.client_id = ?
-            """,
+            "SELECT display_name, level FROM players WHERE client_id = ?",
             (client_id,),
         )
     except Exception:
@@ -178,7 +174,6 @@ def _player_header(client_id: str, database: Any) -> str:
         return "【未建档】"
 
     name = str(row_value(row, "display_name", "未建档") or "未建档")
-    title = str(row_value(row, "title", "无") or "无")
     level = int(row_value(row, "level", 1) or 1)
     return f"【{name}·{title} Lv.{level}】"
 

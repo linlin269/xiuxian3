@@ -1607,6 +1607,12 @@ class XiuxianDB:
                 PRIMARY KEY (client_id, title)
             );
 
+            CREATE TABLE IF NOT EXISTS title_prefs (
+                client_id TEXT PRIMARY KEY,
+                manual_title TEXT NOT NULL DEFAULT '',
+                updated_at TEXT NOT NULL
+            );
+
             CREATE TABLE IF NOT EXISTS player_lifetime_stats (
                 client_id TEXT NOT NULL,
                 stat_key TEXT NOT NULL,

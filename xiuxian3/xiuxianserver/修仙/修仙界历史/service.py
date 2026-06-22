@@ -190,7 +190,7 @@ class XiuxianHistoryService(CoreService):
         if not target:
             return T.hint("没有找到这位玩家。", "请确认名称是否正确，或直接@对方。")
 
-        title = self.refresh_titles(target_id, target) or "无"
+        title = self.current_display_title(target_id) or "无"
         weapon = self.equipped_weapon_row(target_id)
         weapon_text = weapon_label_name(weapon) if weapon else "未佩戴"
         wormhole_count = self.stat_count(

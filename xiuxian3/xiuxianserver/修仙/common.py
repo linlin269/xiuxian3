@@ -1655,205 +1655,87 @@ class CoreService:
     def active_title(self, client_id: str) -> str:
         """读取当前自动称号。"""
 
-        row = self.db.fetch_one(
-            """
-            SELECT title FROM player_titles
-            WHERE client_id = ? AND active = 1
-            LIMIT 1
-            """,
-            (client_id,),
-        )
-        return str(row["title"]) if row else ""
+        from .称号.service import service as title_service
+
+        return title_service.active_title(client_id)
+
+    def manual_title(self, client_id: str) -> str:
+        """读取手动佩戴称号。"""
+
+        from .称号.service import service as title_service
+
+        return title_service.manual_title(client_id)
+
+    def current_display_title(self, client_id: str) -> str:
+        """读取当前显示称号：手动优先，否则自动。"""
+
+        from .称号.service import service as title_service
+
+        return title_service.current_display_title(client_id)
+
+    def set_manual_title(self, client_id: str, title_name: str) -> None:
+        """保存手动佩戴称号。"""
+
+        from .称号.service import service as title_service
+
+        title_service.set_manual_title(client_id, title_name)
+
+    def clear_manual_title(self, client_id: str) -> None:
+        """清空手动佩戴称号。"""
+
+        from .称号.service import service as title_service
+
+        title_service.clear_manual_title(client_id)
+
+    def delete_title_prefs(self, client_id: str) -> None:
+        """删除称号偏好记录。"""
+
+        from .称号.service import service as title_service
+
+        title_service.delete_title_prefs(client_id)
 
     def refresh_titles(self, client_id: str, player: dict[str, Any] | None = None) -> str:
         """按当前数据刷新称号，并自动佩戴当前最合适的一个。"""
 
-        with self.db.transaction() as conn:
-            if player is None:
-                row = conn.execute("SELECT * FROM players WHERE client_id = ?", (client_id,)).fetchone()
-                if not row:
-                    return ""
-                player = dict(row)
-            return self.refresh_titles_conn(conn, client_id, player)
+        from .称号.service import service as title_service
+
+        return title_service.refresh_titles(client_id, player)
 
     def refresh_titles_conn(self, conn: sqlite3.Connection, client_id: str, player: dict[str, Any]) -> str:
         """在事务里刷新称号，并返回自动佩戴的称号。"""
 
-        stats = self._title_stats_conn(conn, client_id, player)
-        rules = self._title_rules(stats)
-        current = ts()
-        valid = self._save_valid_titles_conn(conn, client_id, rules, current)
+        from .称号.service import service as title_service
 
-        conn.execute("UPDATE player_titles SET active = 0 WHERE client_id = ?", (client_id,))
-        if not valid:
-            return ""
-        active_title = max(valid, key=lambda item: item[0])[1]
-        conn.execute(
-            """
-            UPDATE player_titles
-            SET active = 1, updated_at = ?
-            WHERE client_id = ? AND title = ?
-            """,
-            (current, client_id, active_title),
-        )
-        return active_title
+        return title_service.refresh_titles_conn(conn, client_id, player)
 
     def _title_stats_conn(self, conn: sqlite3.Connection, client_id: str, player: dict[str, Any]) -> dict[str, Any]:
         """收集称号判断需要的玩家统计。"""
 
-        def count(table: str, where: str, params: tuple[Any, ...]) -> int:
-            return self._count_conn(conn, table, where, params)
+        from .称号.service import service as title_service
 
-        vault = conn.execute("SELECT balance FROM source_vaults WHERE client_id = ?", (client_id,)).fetchone()
-        vault_balance = int(vault["balance"]) if vault else 0
-        source_stones = int(player["source_stones"])
-        max_weapon = conn.execute(
-            """
-            SELECT max_level, level
-            FROM player_weapons
-            WHERE holder_id = ?
-            ORDER BY max_level DESC, level DESC
-            LIMIT 1
-            """,
-            (client_id,),
-        ).fetchone()
-        max_weapon_level = int(max_weapon["max_level"]) if max_weapon else 0
-        highest_weapon_level = int(max_weapon["level"]) if max_weapon else 0
+        return title_service._title_stats_conn(conn, client_id, player)
 
-        return {
-            "source_stones": source_stones,
-            "vault_balance": vault_balance,
-            "total_assets": source_stones + vault_balance,
-            "sign_count": self.stat_count_conn(conn, client_id, "sign_count", "game_logs", "client_id = ? AND action = '签到'", (client_id,)),
-            "explore_count": self.stat_count_conn(conn, client_id, "explore_count", "exploration_records", "client_id = ?", (client_id,)),
-            "recent_explore_count": self._recent_count_conn(
-                conn,
-                "exploration_records",
-                "client_id = ?",
-                (client_id,),
-                time_column="started_at",
-            ),
-            "trade_sell_count": self.stat_count_conn(conn, client_id, "trade_sell_count", "trade_records", "client_id = ? AND action = 'sell'", (client_id,)),
-            "recent_trade_sell_count": self._recent_count_conn(conn, "trade_records", "client_id = ? AND action = 'sell'", (client_id,)),
-            "recent_world_med_count": self._recent_count_conn(conn, "world_material_records", "client_id = ? AND category = '药路'", (client_id,)),
-            "recent_world_life_count": self._recent_count_conn(conn, "world_material_records", "client_id = ? AND category = '民生'", (client_id,)),
-            "recent_world_build_count": self._recent_count_conn(conn, "world_material_records", "client_id = ? AND category = '建设'", (client_id,)),
-            "recent_world_relic_count": self._recent_count_conn(conn, "world_material_records", "client_id = ? AND category = '古物'", (client_id,)),
-            "recent_special_sell_count": self._recent_count_conn(
-                conn,
-                "trade_records",
-                "client_id = ? AND action IN ('special_sell', 'special_auto_sell')",
-                (client_id,),
-            ),
-            "trade_net": self.stat_total_conn(
-                conn,
-                client_id,
-                "trade_net",
-                """
-                SELECT COALESCE(SUM(
-                    CASE
-                        WHEN action = 'sell' THEN total_price - fee
-                        WHEN action = 'buy' THEN -(total_price + fee)
-                        ELSE 0
-                    END
-                ), 0) AS total
-                FROM trade_records
-                WHERE client_id = ? AND action IN ('buy', 'sell')
-                """,
-                (client_id,),
-            ),
-            "weapon_count": count("player_weapons", "holder_id = ?", (client_id,)),
-            "weapon_recycle_count": self.stat_count_conn(conn, client_id, "weapon_recycle_count", "weapon_recycle_records", "client_id = ?", (client_id,)),
-            "gem_recycle_count": self.stat_count_conn(conn, client_id, "gem_recycle_count", "gem_recycle_records", "client_id = ?", (client_id,)),
-            "book_recycle_count": self.stat_count_conn(conn, client_id, "book_recycle_count", "book_recycle_records", "client_id = ?", (client_id,)),
-            "wormhole_count": self.stat_count_conn(conn, client_id, "wormhole_count", "wormhole_participants", "client_id = ?", (client_id,)),
-            "wormhole_damage": self.stat_total_conn(
-                conn,
-                client_id,
-                "wormhole_damage",
-                "SELECT COALESCE(SUM(damage), 0) AS total FROM wormhole_participants WHERE client_id = ?",
-                (client_id,),
-            ),
-            "boss_count": self.stat_count_conn(conn, client_id, "boss_count", "seasonal_boss_participants", "client_id = ?", (client_id,)),
-            "boss_damage": self.stat_total_conn(
-                conn,
-                client_id,
-                "boss_damage",
-                "SELECT COALESCE(SUM(damage), 0) AS total FROM seasonal_boss_participants WHERE client_id = ?",
-                (client_id,),
-            ),
-            "duel_win_count": self.stat_count_conn(conn, client_id, "duel_win_count", "duel_records", "winner_id = ?", (client_id,)),
-            "recent_duel_win_count": self._recent_count_conn(conn, "duel_records", "winner_id = ?", (client_id,)),
-            "inscription_count": self.stat_count_conn(
-                conn,
-                client_id,
-                "inscription_count",
-                "game_logs",
-                "client_id = ? AND action IN ('铭刻装备', '铭刻武器', '铭刻附魔', '铭刻自带技能')",
-                (client_id,),
-            ),
-            "rare_weapon": self._exists_conn(
-                conn,
-                "player_weapons",
-                "holder_id = ? AND quality IN ('稀品', '珍品')",
-                (client_id,),
-            ),
-            "max_weapon_level": max_weapon_level,
-            "highest_weapon_level": highest_weapon_level,
-        }
+    @staticmethod
+    def _all_equipment_slots_opened(conn: sqlite3.Connection, client_id: str) -> bool:
+        """判断装备是否全部开孔。"""
+        rows = conn.execute("SELECT holes_opened FROM equipment WHERE client_id = ?", (client_id,)).fetchall()
+        if not rows:
+            return False
+        return all(int(r["holes_opened"]) >= 1 for r in rows)
+
+    @staticmethod
+    def _sect_contribution_conn(conn: sqlite3.Connection, client_id: str) -> int:
+        """读取宗门个人贡献。"""
+        row = conn.execute("SELECT COALESCE(SUM(amount), 0) AS total FROM sect_contribution_records WHERE client_id = ?", (client_id,)).fetchone()
+        return int(row["total"] or 0) if row else 0
 
     @staticmethod
     def _title_rules(stats: dict[str, Any]) -> tuple[tuple[int, str, str, bool], ...]:
         """把玩家统计转成称号规则。"""
 
-        explore_regular = stats["recent_explore_count"] >= 3 or stats["explore_count"] >= 5
-        explore_regular_reason = (
-            f"近况探险 {stats['recent_explore_count']} 次"
-            if stats["recent_explore_count"] >= 3
-            else f"累计探险 {stats['explore_count']} 次"
-        )
-        trade_regular = stats["recent_trade_sell_count"] >= 5 or stats["trade_sell_count"] >= 20
-        trade_regular_reason = (
-            f"近况跑商出售 {stats['recent_trade_sell_count']} 次"
-            if stats["recent_trade_sell_count"] >= 5
-            else f"普通跑商出售 {stats['trade_sell_count']} 次"
-        )
-        duel_regular = stats["recent_duel_win_count"] >= 2 or stats["duel_win_count"] >= 3
-        duel_regular_reason = (
-            f"近况对战胜利 {stats['recent_duel_win_count']} 次"
-            if stats["recent_duel_win_count"] >= 2
-            else f"对战胜利 {stats['duel_win_count']} 次"
-        )
-        rules = (
-            (10, "初入仙途", "已经创建修仙角色", True),
-            (18, "晨钟常客", f"累计签到 {stats['sign_count']} 次", stats["sign_count"] >= 7),
-            (20, "小富即安", "随身源石达到 5 万", stats["source_stones"] >= 50_000),
-            (24, "藏源有道", "源库余额达到 10 万", stats["vault_balance"] >= 100_000),
-            (28, "财气盈门", "明面资产达到 30 万", stats["total_assets"] >= 300_000),
-            (30, "探险常客", explore_regular_reason, explore_regular),
-            (34, "山河熟客", f"累计探险 {stats['explore_count']} 次", stats["explore_count"] >= 30),
-            (35, "跑商老手", trade_regular_reason, trade_regular),
-            (36, "丹火借道客", f"近况回收药路 {stats['recent_world_med_count']} 次", stats["recent_world_med_count"] >= 3),
-            (37, "灯火续命人", f"近况回收民生 {stats['recent_world_life_count']} 次", stats["recent_world_life_count"] >= 3),
-            (39, "护城搬山客", f"近况回收建设 {stats['recent_world_build_count']} 次", stats["recent_world_build_count"] >= 3),
-            (38, "商路识途", f"跑商净利润 {money(stats['trade_net'])}", stats["trade_net"] >= 100_000),
-            (41, "秘库经手人", f"近况回收古物 {stats['recent_world_relic_count']} 次", stats["recent_world_relic_count"] >= 2),
-            (42, "战备供货人", f"近况战利品出售 {stats['recent_special_sell_count']} 次", stats["recent_special_sell_count"] >= 3),
-            (40, "兵器收藏家", f"拥有武器 {stats['weapon_count']} 把", stats["weapon_count"] >= 5),
-            (43, "百炼持刃", f"最高武器等级 {stats['highest_weapon_level']}", stats["highest_weapon_level"] >= 40),
-            (45, "铸剑客", f"出售武器 {stats['weapon_recycle_count']} 次", stats["weapon_recycle_count"] >= 3),
-            (46, "藏经归客", f"出售技能书 {stats['book_recycle_count']} 次", stats["book_recycle_count"] >= 3),
-            (47, "琢玉散人", f"出售宝石 {stats['gem_recycle_count']} 次", stats["gem_recycle_count"] >= 3),
-            (50, "虫洞先锋", f"参与异界虫洞 {stats['wormhole_count']} 次", stats["wormhole_count"] > 0),
-            (52, "虫洞鏖战者", f"虫洞累计伤害 {stats['wormhole_damage']}", stats["wormhole_damage"] >= 20_000),
-            (55, "欧气外露", "拥有稀品或珍品武器", stats["rare_weapon"]),
-            (58, "满锋候选", f"最高武器上限 {stats['max_weapon_level']}", stats["max_weapon_level"] >= 80),
-            (60, "岁时赴约人", f"挑战岁时首领 {stats['boss_count']} 次", stats["boss_count"] > 0),
-            (62, "情劫破阵者", f"首领累计伤害 {stats['boss_damage']}", stats["boss_damage"] >= 20_000),
-            (64, "斗法胜手", duel_regular_reason, duel_regular),
-            (66, "羽墨留名", f"铭刻 {stats['inscription_count']} 次", stats["inscription_count"] >= 1),
-        )
-        return rules
+        from .称号.service import service as title_service
+
+        return title_service._title_rules(stats)
 
     @staticmethod
     def _save_valid_titles_conn(
@@ -1864,23 +1746,9 @@ class CoreService:
     ) -> list[tuple[int, str]]:
         """写入当前有效称号，并返回可佩戴称号列表。"""
 
-        valid: list[tuple[int, str]] = []
-        for score, title, reason, ok in rules:
-            if not ok:
-                continue
-            valid.append((score, title))
-            conn.execute(
-                """
-                INSERT INTO player_titles
-                (client_id, title, reason, active, obtained_at, updated_at)
-                VALUES (?, ?, ?, 0, ?, ?)
-                ON CONFLICT(client_id, title)
-                DO UPDATE SET reason = excluded.reason, updated_at = excluded.updated_at
-                """,
-                (client_id, title, reason, current, current),
-            )
+        from .称号.service import service as title_service
 
-        return valid
+        return title_service._save_valid_titles_conn(conn, client_id, rules, current)
 
     @staticmethod
     def _count_conn(conn: sqlite3.Connection, table: str, where: str, params: tuple[Any, ...]) -> int:
