@@ -81,7 +81,7 @@ class FlameService(CoreService):
                 f"第{row['rank']}名 **{row['name']}**｜"
                 f"倍率 x{float(row['attack_multiplier']):.3f}{mark}"
             )
-        return panel.render() + T.buttons("异火", "异火交易")
+        return panel.render() + T.buttons("异火", "异火交易", "异火帮助")
 
     def detail(self, client_id: str, message: str) -> str:
         """查看单个异火详情。"""
@@ -322,6 +322,37 @@ class FlameService(CoreService):
         panel.line("二手市场购买 卖家名称")
         panel.line("如果买家已有同名异火或已有帝炎，则购买失败。")
         return panel.render() + T.buttons("异火", "二手市场")
+
+    # ------------------------------------------------------------------ #
+    #  获取帮助
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def help_info(client_id: str) -> str:
+        """展示23种异火的获取方式。"""
+
+        rows = db.fetch_all("SELECT rank, name, source_type FROM flame_defs ORDER BY rank")
+
+        panel = T.panel()
+        panel.section("异火获取帮助")
+
+        panel.section("合成获取")
+        panel.line("帝炎（第1名）：集齐第2~23名共22种异火后，使用「异火合成」获得。")
+
+        panel.section("首领/虫洞获取")
+        for row in rows:
+            if row["source_type"] == "boss_wormhole":
+                panel.line(f"第{row['rank']}名 **{row['name']}**")
+
+        panel.section("探险/首领/虫洞获取")
+        for row in rows:
+            if row["source_type"] == "explore_low":
+                panel.line(f"第{row['rank']}名 **{row['name']}**")
+
+        panel.hr()
+        panel.line("提示：探险结算有概率获得 rank 21~23 异火；首领和虫洞奖励有概率获得 rank 2~23 异火。")
+
+        return panel.render() + T.buttons("异火列表", "异火")
 
     # ------------------------------------------------------------------ #
     #  异火发放（探险/首领/虫洞 统一入口）

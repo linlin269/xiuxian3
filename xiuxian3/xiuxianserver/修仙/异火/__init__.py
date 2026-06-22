@@ -55,3 +55,10 @@ async def ws_flame_trade(client_id: str, message: str) -> None:
     """展示异火交易说明。"""
 
     await send_reply(client_id, service.trade_info(client_id), ws_manager, service)
+
+
+@WsMessageHandler.handler(cmd="异火帮助", priority=100, block=True)
+async def ws_flame_help(client_id: str, message: str) -> None:
+    """展示23种异火的获取方式。"""
+
+    await send_reply(client_id, service.help_info(client_id), ws_manager, service)

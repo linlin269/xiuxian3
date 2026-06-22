@@ -79,3 +79,227 @@
 06-22 15:11:37 [SUCCESS] launch.adapter.ws.manager | 发送消息 client=7649BE42B13C6F894F761D23C4A04014 success=True body={"code": 202, "type": "markdown", "message": {"content": "【啊忘·无 Lv.1】\n🔴 通知：新手礼包待领｜今日签到待领\n> **我的异火**\n> 尚未拥有任何异火。\n> 异火可通过探险、首领奖励或虫洞奖励获得。", "keyboard": {"content": {"rows": [{"buttons": [{"render_data": {"label": "异火列表", "visited_label": "异火列表", "style": 1}, "action": {"type": 1, "data": "异火列表", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "1"}, {"render_data": {"label": "异火交易", "visited_label": "异火交易", "style": 1}, "action": {"type": 1, "data": "异火交易", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "2"}, {"render_data": {"label": "异火合成", "visited_label": "异火合成", "style": 1}, "action": {"type": 1, "data": "异火合成", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "3"}]}]}}}, "request_id": "e5d2679eee644b5c802035ad3996c64b"}
 06-22 15:11:43 [SUCCESS] launch.adapter.ws.message | 收到消息 client=7649BE42B13C6F894F761D23C4A04014 body={'code': 202, 'type': 'text', 'message': '异火列表', 'request_id': '40d8b8fa205d42a398531c08de5a4782'}
 06-22 15:11:43 [SUCCESS] launch.adapter.ws.manager | 发送消息 client=7649BE42B13C6F894F761D23C4A04014 success=True body={"code": 202, "type": "markdown", "message": {"content": "【啊忘·无 Lv.1】\n🔴 通知：新手礼包待领｜今日签到待领\n> **异火总览**\n> 第1名 **帝炎**｜倍率 x2.000\n> 第2名 **虚无吞炎**｜倍率 x1.900\n> 第3名 **净莲妖火**｜倍率 x1.862\n> 第4名 **金帝焚天炎**｜倍率 x1.824\n> 第5名 **生灵之焱**｜倍率 x1.786\n> 第6名 **八荒破灭焱**｜倍率 x1.748\n> 第7名 **九幽金祖火**｜倍率 x1.710\n> 第8名 **红莲业火**｜倍率 x1.671\n> 第9名 **三千焱炎火**｜倍率 x1.633\n> 第10名 **九幽风炎**｜倍率 x1.595\n> 第11名 **骨灵冷火**｜倍率 x1.557\n> 第12名 **九龙雷罡火**｜倍率 x1.519\n> 第13名 **龟灵地火**｜倍率 x1.481\n> 第14名 **陨落心炎**｜倍率 x1.443\n> 第15名 **海心焰**｜倍率 x1.405\n> 第16名 **火云水炎**｜倍率 x1.367\n> 第17名 **火山石焰**｜倍率 x1.329\n> 第18名 **风怒龙炎**｜倍率 x1.290\n> 第19名 **青莲地心火**｜倍率 x1.252\n> 第20名 **幽冥毒火**｜倍率 x1.214\n> 第21名 **阴阳双炎**｜倍率 x1.176\n> 第22名 **万兽灵火**｜倍率 x1.138\n> 第23名 **玄黄炎**｜倍率 x1.100", "keyboard": {"content": {"rows": [{"buttons": [{"render_data": {"label": "异火", "visited_label": "异火", "style": 1}, "action": {"type": 1, "data": "异火", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "1"}, {"render_data": {"label": "异火交易", "visited_label": "异火交易", "style": 1}, "action": {"type": 1, "data": "异火交易", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "2"}]}]}}}, "request_id": "40d8b8fa205d42a398531c08de5a4782"}
+06-22 15:54:17 [SUCCESS] launch.adapter.ws.message | 收到消息 client=7649BE42B13C6F894F761D23C4A04014 body={'code': 202, 'type': 'text', 'message': '<@F22EE06417714EBB166FC483763572E4> /创建用户 啊忘', 'request_id': '0ac840019c8d4087b212b7b7bf1257bc'}
+06-22 15:54:19 [SUCCESS] launch.adapter.ws.message | 收到消息 client=F22EE06417714EBB166FC483763572E4 body={'code': 202, 'type': 'text', 'message': '【啊忘·欧气外露 Lv.5】 🔴 系统：岁时情劫：在退潮后等船的人·沙洲望潮客 *你已经创建过用户了。* 发送：修仙信息 查看角色，或发送：改名 新名称', 'request_id': '0f6a228a0d51444a9e5bb77de3f3c1d9'}
+06-22 15:54:53 [INFO] uvicorn | ('127.0.0.1', 50604) - "WebSocket /ws/bot/C0FDB582B55542B9D07B10A5FDCECC96" [accepted]
+06-22 15:54:53 [INFO] uvicorn | connection open
+06-22 15:54:53 [SUCCESS] launch.adapter.ws.message | 收到消息 client=C0FDB582B55542B9D07B10A5FDCECC96 body={'code': 202, 'type': 'text', 'message': '<@F22EE06417714EBB166FC483763572E4> /创建用户', 'request_id': '70395476e1df40c49ece62d29e961b31'}
+06-22 15:54:55 [SUCCESS] launch.adapter.ws.message | 收到消息 client=F22EE06417714EBB166FC483763572E4 body={'code': 202, 'type': 'text', 'message': '【未建档】 *缺少用户名称。* 发送：创建用户 青衫客', 'request_id': '3faf34389c064875aa9167834376b42b'}
+06-22 15:55:10 [SUCCESS] launch.adapter.ws.message | 收到消息 client=C0FDB582B55542B9D07B10A5FDCECC96 body={'code': 202, 'type': 'text', 'message': '创建用户', 'request_id': '176477f62917481f99d4bd22e7420a7c'}
+06-22 15:55:10 [SUCCESS] launch.adapter.ws.manager | 发送消息 client=C0FDB582B55542B9D07B10A5FDCECC96 success=True body={"code": 202, "type": "markdown", "message": {"content": "【未建档】\n*缺少用户名称。*\n发送：创建用户 青衫客", "keyboard": {"content": {"rows": [{"buttons": [{"render_data": {"label": "签到", "visited_label": "签到", "style": 1}, "action": {"type": 1, "data": "签到", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "1"}, {"render_data": {"label": "探险", "visited_label": "探险", "style": 1}, "action": {"type": 1, "data": "探险", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "2"}, {"render_data": {"label": "探险状态", "visited_label": "探险状态", "style": 1}, "action": {"type": 1, "data": "探险状态", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "3"}]}, {"buttons": [{"render_data": {"label": "结束探险", "visited_label": "结束探险", "style": 1}, "action": {"type": 1, "data": "结束探险", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "4"}, {"render_data": {"label": "休息", "visited_label": "休息", "style": 1}, "action": {"type": 1, "data": "休息", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "5"}, {"render_data": {"label": "结束休息", "visited_label": "结束休息", "style": 1}, "action": {"type": 1, "data": "结束休息", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "6"}]}]}}}, "request_id": "176477f62917481f99d4bd22e7420a7c"}
+06-22 15:55:12 [SUCCESS] launch.adapter.ws.message | 收到消息 client=F22EE06417714EBB166FC483763572E4 body={'code': 202, 'type': 'text', 'message': '【未建档】 *缺少用户名称。* 发送：创建用户 青衫客', 'request_id': '4d81287464a247d5b0b76c6cad3952eb'}
+06-22 15:55:18 [SUCCESS] launch.adapter.ws.message | 收到消息 client=C0FDB582B55542B9D07B10A5FDCECC96 body={'code': 202, 'type': 'text', 'message': '<@F22EE06417714EBB166FC483763572E4> //创建用户', 'request_id': '480cfa32e8de4a3aa88665ecb74f95ea'}
+06-22 15:55:35 [SUCCESS] launch.adapter.ws.message | 收到消息 client=C0FDB582B55542B9D07B10A5FDCECC96 body={'code': 202, 'type': 'text', 'message': '你好', 'request_id': 'db36182f03d64cdda23cdbabbe6ac0d5'}
+06-22 15:56:37 [SUCCESS] launch.adapter.ws.message | 收到消息 client=7649BE42B13C6F894F761D23C4A04014 body={'code': 202, 'type': 'text', 'message': '<@C0FDB582B55542B9D07B10A5FDCECC96> /修仙信息', 'request_id': '092de3cabb7545ebb4dc11cc61f297bb'}
+06-22 15:56:44 [SUCCESS] launch.adapter.ws.message | 收到消息 client=7649BE42B13C6F894F761D23C4A04014 body={'code': 202, 'type': 'text', 'message': '/修仙信息', 'request_id': 'b231577d72644056bf77f52625b9d7fa'}
+06-22 15:56:55 [SUCCESS] launch.adapter.ws.message | 收到消息 client=7649BE42B13C6F894F761D23C4A04014 body={'code': 202, 'type': 'text', 'message': '<@F22EE06417714EBB166FC483763572E4> /修仙信息', 'request_id': 'ce4b7ef58b114f52b83ec608cd61f3b5'}
+06-22 15:57:07 [SUCCESS] launch.adapter.ws.message | 收到消息 client=7649BE42B13C6F894F761D23C4A04014 body={'code': 202, 'type': 'text', 'message': '<@F22EE06417714EBB166FC483763572E4> /改名', 'request_id': '0a31e36d07b7458fa432f6e21c26ba0f'}
+06-22 15:57:17 [SUCCESS] launch.adapter.ws.message | 收到消息 client=7649BE42B13C6F894F761D23C4A04014 body={'code': 202, 'type': 'text', 'message': '<@F22EE06417714EBB166FC483763572E4> /修仙帮助', 'request_id': 'b429c146ba454f0ebb90ddf50d759501'}
+06-22 16:01:11 [SUCCESS] launch.adapter.ws.message | 收到消息 client=7649BE42B13C6F894F761D23C4A04014 body={'code': 202, 'type': 'text', 'message': '/改名', 'request_id': '522afbad34214c0bbd9e62e2e6469dfa'}
+06-22 16:01:13 [SUCCESS] launch.adapter.ws.message | 收到消息 client=F22EE06417714EBB166FC483763572E4 body={'code': 202, 'type': 'text', 'message': '【啊忘·欧气外露 Lv.5】 🔴 系统：岁时情劫：在退潮后等船的人·沙洲望潮客 *缺少新名称。* 发送：改名 云游客', 'request_id': '7bb63dadd0c84afc8f95a1614bc9db4e'}
+06-22 16:01:32 [SUCCESS] launch.adapter.ws.message | 收到消息 client=7649BE42B13C6F894F761D23C4A04014 body={'code': 202, 'type': 'text', 'message': '/改名 悠悠', 'request_id': '2ef97f3273a248f8a6b2b5f477b967d8'}
+06-22 16:01:35 [SUCCESS] launch.adapter.ws.message | 收到消息 client=F22EE06417714EBB166FC483763572E4 body={'code': 202, 'type': 'text', 'message': '【啊忘·欧气外露 Lv.5】 🔴 系统：岁时情劫：在退潮后等船的人·沙洲望潮客 *改名太频繁，请约 23 小时后再试。* 冷却结束后发送：改名 新名称', 'request_id': '3c9908ad15f14be5bf2438c9e0552365'}
+06-22 16:02:01 [SUCCESS] launch.adapter.ws.message | 收到消息 client=C0FDB582B55542B9D07B10A5FDCECC96 body={'code': 202, 'type': 'text', 'message': '<@F22EE06417714EBB166FC483763572E4> /创建用户 悠悠', 'request_id': 'bf2c6699d73544e4901292439e6e189c'}
+06-22 16:02:03 [SUCCESS] launch.adapter.ws.message | 收到消息 client=F22EE06417714EBB166FC483763572E4 body={'code': 202, 'type': 'text', 'message': '【悠悠·无 Lv.1】 🔴 系统：岁时情劫：在退潮后等船的人·沙洲望潮客 🔴 通知：新手礼包待领｜今日签到待领 创建成功，道友 悠悠。初始武器：青岚短剑。', 'request_id': 'c9fce9b2669a44b5839cabcba80c8f34'}
+06-22 16:02:08 [SUCCESS] launch.adapter.ws.message | 收到消息 client=C0FDB582B55542B9D07B10A5FDCECC96 body={'code': 202, 'type': 'text', 'message': '<@F22EE06417714EBB166FC483763572E4> 改名 林北', 'request_id': 'c965bd0f5753402a9ab19b87f05dd0e6'}
+06-22 16:02:10 [SUCCESS] launch.adapter.ws.message | 收到消息 client=F22EE06417714EBB166FC483763572E4 body={'code': 202, 'type': 'text', 'message': '【林北·无 Lv.1】 🔴 系统：岁时情劫：在退潮后等船的人·沙洲望潮客 🔴 通知：新手礼包待领｜今日签到待领 改名成功，现在叫 林北。', 'request_id': '63d50f08e13c4047a85efa5b2ae6f4c7'}
+06-22 16:02:24 [SUCCESS] launch.adapter.ws.message | 收到消息 client=7649BE42B13C6F894F761D23C4A04014 body={'code': 202, 'type': 'text', 'message': '<@F22EE06417714EBB166FC483763572E4> /修仙信息', 'request_id': '0cd3e6db7de74684b1ac7a2388f0d3a9'}
+06-22 16:02:26 [SUCCESS] launch.adapter.ws.message | 收到消息 client=F22EE06417714EBB166FC483763572E4 body={'code': 202, 'type': 'text', 'message': '【啊忘·欧气外露 Lv.5】 🔴 系统：岁时情劫：在退潮后等船的人·沙洲望潮客 > **状态** > 经验：**0/5356** > 血气：**160/160**｜精神：**90/90** > 源石：**10650**｜状态：空闲｜自动用药：开启 > 战斗日志：简要 > 地点：星陨墟 (5,-43) > > **战力** > 攻击：**61**（基础 5 + 武器 56） > 防御：**5** > 速度：**68.0**（极慢） > 技能节奏：偏慢，约每 5 次出手触发 > 蓄势基准：4（越小越快） > > **体质** > 🌿 凡体 > ✨ 凡阶 · 均衡向 · 未觉醒 > 💤 天赋：无主动效果 > > **武器** > 〔5〕 流光细剑 [珍品] > 类型：剑｜定位：均衡灵活，速度和伤害都比较稳 > 攻击：**+56** > 技能：流光刺 > 附魔：无 > > **装备** > 头部 Lv0 3孔 > 左手 Lv0 3孔 > 右手 Lv0 3孔 > 左脚 Lv0 3孔 > 右脚 Lv0 3孔 > 饰品 Lv0 3孔 > 护甲 Lv0 3孔 > > **今日加成** > 气运：小吉（探险+4.0%） > 天气：晴岚（探险+3.0%） > 灵潮：灵潮平稳（无主动效果） > 今日加成：探险+7.0%', 'request_id': 'b2c387c085d04bcd8a267a6740e7491d'}
+06-22 16:02:27 [SUCCESS] launch.adapter.ws.message | 收到消息 client=7649BE42B13C6F894F761D23C4A04014 body={'code': 202, 'type': 'text', 'message': '修仙信息', 'request_id': 'c3612849053c4fb5a20b104df14157e7'}
+06-22 16:02:27 [SUCCESS] launch.adapter.ws.manager | 发送消息 client=7649BE42B13C6F894F761D23C4A04014 success=True body={"code": 202, "type": "markdown", "message": {"content": "【啊忘·初入仙途 Lv.1】\n🔴 通知：新手礼包待领｜今日签到待领\n> **状态**\n> 经验：**0/720**\n> 血气：**112/112**｜精神：**66/66**\n> 源石：**0**｜状态：空闲｜自动用药：开启\n> 战斗日志：简要\n> 地点：天枢城 (0,0)\n>\n> **战力**\n> 攻击：**23**（基础 5 + 武器 18）\n> 异火：未装备\n> 防御：**1**\n> 速度：**99.6**（均衡）\n> 技能节奏：高频，约每 2 次出手触发\n> 蓄势基准：3（越小越快）\n>\n> **体质**\n> 🌿 凡体\n> ✨ 凡阶 · 均衡向 · 未觉醒\n> 💤 天赋：无主动效果\n>\n> **武器**\n> 〔2〕 青岚短剑 [凡品]\n> 类型：剑｜定位：均衡灵活，速度和伤害都比较稳\n> 攻击：**+18**\n> 技能：风刃斩\n> 附魔：无\n>\n> **装备**\n> 头部 Lv0 3孔\n> 左手 Lv0 3孔\n> 右手 Lv0 3孔\n> 左脚 Lv0 3孔\n> 右脚 Lv0 3孔\n> 饰品 Lv0 3孔\n> 护甲 Lv0 3孔\n>\n> **今日加成**\n> 气运：未签到\n> 天气：晴岚（探险+3.0%）\n> 灵潮：灵潮平稳（无主动效果）\n> 今日加成：探险+3.0%", "keyboard": {"content": {"rows": [{"buttons": [{"render_data": {"label": "休息", "visited_label": "休息", "style": 1}, "action": {"type": 1, "data": "休息", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "1"}, {"render_data": {"label": "结束休息", "visited_label": "结束休息", "style": 1}, "action": {"type": 1, "data": "结束休息", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "2"}, {"render_data": {"label": "地图", "visited_label": "地图", "style": 1}, "action": {"type": 1, "data": "地图", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "3"}]}]}}}, "request_id": "c3612849053c4fb5a20b104df14157e7"}
+06-22 16:02:29 [SUCCESS] launch.adapter.ws.message | 收到消息 client=F22EE06417714EBB166FC483763572E4 body={'code': 202, 'type': 'text', 'message': '【啊忘·欧气外露 Lv.5】 🔴 系统：岁时情劫：在退潮后等船的人·沙洲望潮客 > **状态** > 经验：**0/5356** > 血气：**160/160**｜精神：**90/90** > 源石：**10650**｜状态：空闲｜自动用药：开启 > 战斗日志：简要 > 地点：星陨墟 (5,-43) > > **战力** > 攻击：**61**（基础 5 + 武器 56） > 防御：**5** > 速度：**68.0**（极慢） > 技能节奏：偏慢，约每 5 次出手触发 > 蓄势基准：4（越小越快） > > **体质** > 🌿 凡体 > ✨ 凡阶 · 均衡向 · 未觉醒 > 💤 天赋：无主动效果 > > **武器** > 〔5〕 流光细剑 [珍品] > 类型：剑｜定位：均衡灵活，速度和伤害都比较稳 > 攻击：**+56** > 技能：流光刺 > 附魔：无 > > **装备** > 头部 Lv0 3孔 > 左手 Lv0 3孔 > 右手 Lv0 3孔 > 左脚 Lv0 3孔 > 右脚 Lv0 3孔 > 饰品 Lv0 3孔 > 护甲 Lv0 3孔 > > **今日加成** > 气运：小吉（探险+4.0%） > 天气：晴岚（探险+3.0%） > 灵潮：灵潮平稳（无主动效果） > 今日加成：探险+7.0%', 'request_id': 'ad247f66e9844795b6fb00d2e9a9deed'}
+06-22 16:02:32 [SUCCESS] launch.adapter.ws.message | 收到消息 client=7649BE42B13C6F894F761D23C4A04014 body={'code': 202, 'type': 'text', 'message': '/修仙信息', 'request_id': 'b422cc893828450092a40dce75d520e2'}
+06-22 16:02:35 [SUCCESS] launch.adapter.ws.message | 收到消息 client=F22EE06417714EBB166FC483763572E4 body={'code': 202, 'type': 'text', 'message': '【啊忘·欧气外露 Lv.5】 🔴 系统：岁时情劫：在退潮后等船的人·沙洲望潮客 > **状态** > 经验：**0/5356** > 血气：**160/160**｜精神：**90/90** > 源石：**10650**｜状态：空闲｜自动用药：开启 > 战斗日志：简要 > 地点：星陨墟 (5,-43) > > **战力** > 攻击：**61**（基础 5 + 武器 56） > 防御：**5** > 速度：**68.0**（极慢） > 技能节奏：偏慢，约每 5 次出手触发 > 蓄势基准：4（越小越快） > > **体质** > 🌿 凡体 > ✨ 凡阶 · 均衡向 · 未觉醒 > 💤 天赋：无主动效果 > > **武器** > 〔5〕 流光细剑 [珍品] > 类型：剑｜定位：均衡灵活，速度和伤害都比较稳 > 攻击：**+56** > 技能：流光刺 > 附魔：无 > > **装备** > 头部 Lv0 3孔 > 左手 Lv0 3孔 > 右手 Lv0 3孔 > 左脚 Lv0 3孔 > 右脚 Lv0 3孔 > 饰品 Lv0 3孔 > 护甲 Lv0 3孔 > > **今日加成** > 气运：小吉（探险+4.0%） > 天气：晴岚（探险+3.0%） > 灵潮：灵潮平稳（无主动效果） > 今日加成：探险+7.0%', 'request_id': '628c8c81e70f493f9c7ab8d60eff1899'}
+06-22 16:02:46 [SUCCESS] launch.adapter.ws.message | 收到消息 client=7649BE42B13C6F894F761D23C4A04014 body={'code': 202, 'type': 'text', 'message': '/修仙帮助', 'request_id': 'aff61574acaa45e6a8da7ef0333cedee'}
+06-22 16:02:50 [SUCCESS] launch.adapter.ws.message | 收到消息 client=F22EE06417714EBB166FC483763572E4 body={'code': 202, 'type': 'text', 'message': '<attachment[image]:https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhT5J5lETefpV-2UY2leUsyvmaO80RiP8wkg_woo-uLg-46blQMyBHByb2RQgL2jAVoQIrhrLtp9I6ipX9AQ_WAv4noCEb6CAQJuag&rkey=CAESOE4_cASDm1t1pho345LTwR1OvbeJjwGUydkx88ob_i30QoSTFV6HHHxmfqcgLMPNQjHc3gP4fI0v&spec=0>', 'request_id': '7c6fa23dedcf4974853d01801b8963ce'}
+06-22 16:02:53 [SUCCESS] launch.adapter.ws.message | 收到消息 client=7649BE42B13C6F894F761D23C4A04014 body={'code': 202, 'type': 'text', 'message': '<@F22EE06417714EBB166FC483763572E4> /修仙帮助', 'request_id': '36fea02f7a7048399c90ffd2fdd86897'}
+06-22 16:02:57 [SUCCESS] launch.adapter.ws.message | 收到消息 client=F22EE06417714EBB166FC483763572E4 body={'code': 202, 'type': 'text', 'message': '<attachment[image]:https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhT5J5lETefpV-2UY2leUsyvmaO80RiP8wkg_woohZqO_46blQMyBHByb2RQgL2jAVoQZVY1o_hf_GyYoehOmzc2z3oCNDKCAQJuag&rkey=CAQSODOc_jvbthUj5a-t1MeMextQ4SuYCtwWsch4mfWb--8RwyCwpPmtOekXHR2QQW8lxRDw8Va5bYNk&spec=0>', 'request_id': 'deb04107aed44d62b2f17bffc9e60aa4'}
+06-22 15:18:22 [WARNING] uvicorn | WatchFiles detected changes in '修仙\异火\service.py'. Reloading...
+06-22 16:18:22 [INFO] uvicorn | Shutting down
+06-22 16:18:22 [INFO] uvicorn | connection closed
+06-22 16:18:22 [INFO] uvicorn | connection closed
+06-22 16:18:22 [INFO] uvicorn | connection closed
+06-22 16:18:22 [INFO] uvicorn | connection closed
+06-22 16:18:22 [INFO] uvicorn | Waiting for application shutdown.
+06-22 16:18:22 [INFO] 修仙.数据库备份 | 执行 修仙数据库 备份 path=C:\xiuxian3\xiuxian3\xiuxianserver\修仙\数据库备份\xiuxian_20260622_1618.db
+06-22 16:18:22 [INFO] 修仙 | 执行 修仙数据库 关闭
+06-22 16:18:22 [INFO] uvicorn | Application shutdown complete.
+06-22 16:18:22 [INFO] uvicorn | Finished server process [6220]
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=auto.cfg
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module include router module=修仙 tag=修仙
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.二手市场
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.保险箱
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙帮助
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙物品
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙界历史
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙百科
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.后台接口
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.宗门
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.对战
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.异火
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.异界虫洞
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.战斗日志
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.探险
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.数据库备份
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.武器
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.源库
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.玩家
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.纳戒
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.背包
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.装备
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.贸易服务
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.铭刻
+06-22 16:18:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.首领
+06-22 16:18:24 [INFO] uvicorn | Started server process [5852]
+06-22 16:18:24 [INFO] uvicorn | Waiting for application startup.
+06-22 16:18:24 [SUCCESS] launch.mount | Loaded handler path=/ws/bot/{client_id}
+06-22 16:18:24 [SUCCESS] launch.lifespan | 成功添加定时同步任务 id=sect_war_generate_rewards
+06-22 16:18:24 [INFO] auto.cfg | 执行 FastAPICache 初始化
+06-22 16:18:24 [INFO] 修仙 | 执行 修仙数据库 启动
+06-22 16:18:24 [INFO] 修仙.修仙帮助 | 执行 修仙帮助站 启动 文档 32 份，组件 24 个
+06-22 16:18:24 [INFO] 修仙.修仙百科 | 执行 修仙百科 启动 知识 729 条
+06-22 16:18:24 [SUCCESS] launch.lifespan | FastAPI 服务启动成功
+06-22 16:18:24 [INFO] uvicorn | Application startup complete.
+06-22 15:18:40 [WARNING] uvicorn | WatchFiles detected changes in '修仙\异火\service.py'. Reloading...
+06-22 16:18:40 [INFO] uvicorn | Shutting down
+06-22 16:18:40 [INFO] uvicorn | Waiting for application shutdown.
+06-22 16:18:40 [INFO] 修仙.数据库备份 | 跳过 修仙数据库 热重启备份
+06-22 16:18:41 [INFO] 修仙 | 执行 修仙数据库 关闭
+06-22 16:18:41 [INFO] uvicorn | Application shutdown complete.
+06-22 16:18:41 [INFO] uvicorn | Finished server process [5852]
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=auto.cfg
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module include router module=修仙 tag=修仙
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.二手市场
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.保险箱
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙帮助
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙物品
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙界历史
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙百科
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.后台接口
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.宗门
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.对战
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.异火
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.异界虫洞
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.战斗日志
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.探险
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.数据库备份
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.武器
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.源库
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.玩家
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.纳戒
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.背包
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.装备
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.贸易服务
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.铭刻
+06-22 16:18:42 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.首领
+06-22 16:18:42 [INFO] uvicorn | Started server process [11200]
+06-22 16:18:42 [INFO] uvicorn | Waiting for application startup.
+06-22 16:18:42 [SUCCESS] launch.mount | Loaded handler path=/ws/bot/{client_id}
+06-22 16:18:42 [SUCCESS] launch.lifespan | 成功添加定时同步任务 id=sect_war_generate_rewards
+06-22 16:18:42 [INFO] auto.cfg | 执行 FastAPICache 初始化
+06-22 16:18:42 [INFO] 修仙 | 执行 修仙数据库 启动
+06-22 16:18:42 [INFO] 修仙.修仙帮助 | 执行 修仙帮助站 启动 文档 32 份，组件 24 个
+06-22 16:18:42 [INFO] 修仙.修仙百科 | 执行 修仙百科 启动 知识 729 条
+06-22 16:18:42 [SUCCESS] launch.lifespan | FastAPI 服务启动成功
+06-22 16:18:42 [INFO] uvicorn | Application startup complete.
+06-22 15:18:49 [WARNING] uvicorn | WatchFiles detected changes in '修仙\异火\__init__.py'. Reloading...
+06-22 16:18:50 [INFO] uvicorn | Shutting down
+06-22 16:18:50 [INFO] uvicorn | Waiting for application shutdown.
+06-22 16:18:50 [INFO] 修仙.数据库备份 | 跳过 修仙数据库 热重启备份
+06-22 16:18:50 [INFO] 修仙 | 执行 修仙数据库 关闭
+06-22 16:18:50 [INFO] uvicorn | Application shutdown complete.
+06-22 16:18:50 [INFO] uvicorn | Finished server process [11200]
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=auto.cfg
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module include router module=修仙 tag=修仙
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.二手市场
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.保险箱
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙帮助
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙物品
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙界历史
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙百科
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.后台接口
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.宗门
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.对战
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.异火
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.异界虫洞
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.战斗日志
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.探险
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.数据库备份
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.武器
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.源库
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.玩家
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.纳戒
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.背包
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.装备
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.贸易服务
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.铭刻
+06-22 16:18:50 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.首领
+06-22 16:18:50 [INFO] uvicorn | Started server process [9980]
+06-22 16:18:50 [INFO] uvicorn | Waiting for application startup.
+06-22 16:18:50 [SUCCESS] launch.mount | Loaded handler path=/ws/bot/{client_id}
+06-22 16:18:50 [SUCCESS] launch.lifespan | 成功添加定时同步任务 id=sect_war_generate_rewards
+06-22 16:18:50 [INFO] auto.cfg | 执行 FastAPICache 初始化
+06-22 16:18:50 [INFO] 修仙 | 执行 修仙数据库 启动
+06-22 16:18:51 [INFO] 修仙.修仙帮助 | 执行 修仙帮助站 启动 文档 32 份，组件 24 个
+06-22 16:18:51 [INFO] 修仙.修仙百科 | 执行 修仙百科 启动 知识 729 条
+06-22 16:18:51 [SUCCESS] launch.lifespan | FastAPI 服务启动成功
+06-22 16:18:51 [INFO] uvicorn | Application startup complete.
+06-22 16:20:17 [INFO] uvicorn | Shutting down
+06-22 16:20:17 [INFO] uvicorn | Waiting for application shutdown.
+06-22 16:20:17 [INFO] 修仙.数据库备份 | 跳过 修仙数据库 热重启备份
+06-22 16:20:17 [INFO] 修仙 | 执行 修仙数据库 关闭
+06-22 16:20:17 [INFO] uvicorn | Application shutdown complete.
+06-22 16:20:17 [INFO] uvicorn | Finished server process [9980]
+06-22 15:20:17 [INFO] uvicorn | Stopping reloader process [6808]
+06-22 15:20:24 [INFO] uvicorn | Will watch for changes in these directories: ['C:\\xiuxian3\\xiuxian3\\xiuxianserver']
+06-22 15:20:24 [INFO] uvicorn | Uvicorn running on http://0.0.0.0:1234 (Press CTRL+C to quit)
+06-22 15:20:24 [INFO] uvicorn | Started reloader process [6352] using WatchFiles
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=auto.cfg
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module include router module=修仙 tag=修仙
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.二手市场
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.保险箱
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙帮助
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙物品
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙界历史
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.修仙百科
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.后台接口
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.宗门
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.对战
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.异火
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.异界虫洞
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.战斗日志
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.探险
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.数据库备份
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.武器
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.源库
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.玩家
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.纳戒
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.背包
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.装备
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.贸易服务
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.铭刻
+06-22 16:20:24 [SUCCESS] launch.load_router | Loaded module not include router module=修仙.首领
+06-22 16:20:24 [INFO] uvicorn | Started server process [5500]
+06-22 16:20:24 [INFO] uvicorn | Waiting for application startup.
+06-22 16:20:24 [SUCCESS] launch.mount | Loaded handler path=/ws/bot/{client_id}
+06-22 16:20:24 [SUCCESS] launch.lifespan | 成功添加定时同步任务 id=sect_war_generate_rewards
+06-22 16:20:24 [INFO] auto.cfg | 执行 FastAPICache 初始化
+06-22 16:20:24 [INFO] 修仙 | 执行 修仙数据库 启动
+06-22 16:20:24 [INFO] 修仙.修仙帮助 | 执行 修仙帮助站 启动 文档 32 份，组件 24 个
+06-22 16:20:24 [INFO] 修仙.修仙百科 | 执行 修仙百科 启动 知识 729 条
+06-22 16:20:24 [SUCCESS] launch.lifespan | FastAPI 服务启动成功
+06-22 16:20:24 [INFO] uvicorn | Application startup complete.
+06-22 16:22:44 [INFO] uvicorn | ('127.0.0.1', 51918) - "WebSocket /ws/bot/915CB72DE371EDFAE4E02BBF099D0384" [accepted]
+06-22 16:22:44 [INFO] uvicorn | connection open
+06-22 16:22:44 [SUCCESS] launch.adapter.ws.message | 收到消息 client=915CB72DE371EDFAE4E02BBF099D0384 body={'code': 202, 'type': 'text', 'message': '异火列表', 'request_id': '24243a7d589049e3aebb8615316e692f'}
+06-22 16:22:44 [SUCCESS] launch.adapter.ws.manager | 发送消息 client=915CB72DE371EDFAE4E02BBF099D0384 success=True body={"code": 202, "type": "markdown", "message": {"content": "【木易·无 Lv.1】\n🔴 通知：新手礼包待领｜今日签到待领\n> **异火总览**\n> 第1名 **帝炎**｜倍率 x2.000\n> 第2名 **虚无吞炎**｜倍率 x1.900\n> 第3名 **净莲妖火**｜倍率 x1.862\n> 第4名 **金帝焚天炎**｜倍率 x1.824\n> 第5名 **生灵之焱**｜倍率 x1.786\n> 第6名 **八荒破灭焱**｜倍率 x1.748\n> 第7名 **九幽金祖火**｜倍率 x1.710\n> 第8名 **红莲业火**｜倍率 x1.671\n> 第9名 **三千焱炎火**｜倍率 x1.633\n> 第10名 **九幽风炎**｜倍率 x1.595\n> 第11名 **骨灵冷火**｜倍率 x1.557\n> 第12名 **九龙雷罡火**｜倍率 x1.519\n> 第13名 **龟灵地火**｜倍率 x1.481\n> 第14名 **陨落心炎**｜倍率 x1.443\n> 第15名 **海心焰**｜倍率 x1.405\n> 第16名 **火云水炎**｜倍率 x1.367\n> 第17名 **火山石焰**｜倍率 x1.329\n> 第18名 **风怒龙炎**｜倍率 x1.290\n> 第19名 **青莲地心火**｜倍率 x1.252\n> 第20名 **幽冥毒火**｜倍率 x1.214\n> 第21名 **阴阳双炎**｜倍率 x1.176\n> 第22名 **万兽灵火**｜倍率 x1.138\n> 第23名 **玄黄炎**｜倍率 x1.100", "keyboard": {"content": {"rows": [{"buttons": [{"render_data": {"label": "异火", "visited_label": "异火", "style": 1}, "action": {"type": 1, "data": "异火", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "1"}, {"render_data": {"label": "异火交易", "visited_label": "异火交易", "style": 1}, "action": {"type": 1, "data": "异火交易", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "2"}, {"render_data": {"label": "异火帮助", "visited_label": "异火帮助", "style": 1}, "action": {"type": 1, "data": "异火帮助", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "3"}]}]}}}, "request_id": "24243a7d589049e3aebb8615316e692f"}
+06-22 16:22:50 [SUCCESS] launch.adapter.ws.message | 收到消息 client=915CB72DE371EDFAE4E02BBF099D0384 body={'code': 202, 'type': 'text', 'message': '异火帮助', 'request_id': '4128bf2707d549ed9a47c25acb9f31de'}
+06-22 16:22:50 [SUCCESS] launch.adapter.ws.manager | 发送消息 client=915CB72DE371EDFAE4E02BBF099D0384 success=True body={"code": 202, "type": "markdown", "message": {"content": "【木易·无 Lv.1】\n🔴 通知：新手礼包待领｜今日签到待领\n> **异火获取帮助**\n> **合成获取**\n> 帝炎（第1名）：集齐第2~23名共22种异火后，使用「异火合成」获得。\n> **首领/虫洞获取**\n> 第2名 **虚无吞炎**\n> 第3名 **净莲妖火**\n> 第4名 **金帝焚天炎**\n> 第5名 **生灵之焱**\n> 第6名 **八荒破灭焱**\n> 第7名 **九幽金祖火**\n> 第8名 **红莲业火**\n> 第9名 **三千焱炎火**\n> 第10名 **九幽风炎**\n> 第11名 **骨灵冷火**\n> 第12名 **九龙雷罡火**\n> 第13名 **龟灵地火**\n> 第14名 **陨落心炎**\n> 第15名 **海心焰**\n> 第16名 **火云水炎**\n> 第17名 **火山石焰**\n> 第18名 **风怒龙炎**\n> 第19名 **青莲地心火**\n> 第20名 **幽冥毒火**\n> **探险/首领/虫洞获取**\n> 第21名 **阴阳双炎**\n> 第22名 **万兽灵火**\n> 第23名 **玄黄炎**\n>\n> 提示：探险结算有概率获得 rank 21~23 异火；首领和虫洞奖励有概率获得 rank 2~23 异火。", "keyboard": {"content": {"rows": [{"buttons": [{"render_data": {"label": "异火列表", "visited_label": "异火列表", "style": 1}, "action": {"type": 1, "data": "异火列表", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "1"}, {"render_data": {"label": "异火", "visited_label": "异火", "style": 1}, "action": {"type": 1, "data": "异火", "permission": {"type": 2}, "click_limit": 1, "unsupport_tips": "不支持的操作喵！"}, "group_id": null, "id": "2"}]}]}}}, "request_id": "4128bf2707d549ed9a47c25acb9f31de"}
+06-22 16:24:23 [INFO] uvicorn | connection closed
+06-22 16:24:26 [INFO] uvicorn | Shutting down
+06-22 16:24:26 [INFO] uvicorn | Waiting for application shutdown.
+06-22 16:24:26 [INFO] 修仙.数据库备份 | 跳过 修仙数据库 热重启备份
+06-22 16:24:26 [INFO] 修仙 | 执行 修仙数据库 关闭
+06-22 16:24:26 [INFO] uvicorn | Application shutdown complete.
+06-22 16:24:26 [INFO] uvicorn | Finished server process [5500]
+06-22 15:24:26 [INFO] uvicorn | Stopping reloader process [6352]
