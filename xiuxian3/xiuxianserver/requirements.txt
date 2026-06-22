@@ -1,0 +1,8 @@
+APScheduler==3.11.0
+fastapi==0.115.8
+fastapi-cache2==0.2.2
+loguru==0.7.3
+lunardate==0.2.2
+tzdata==2025.1
+uvicorn==0.34.0
+websockets==14.2
