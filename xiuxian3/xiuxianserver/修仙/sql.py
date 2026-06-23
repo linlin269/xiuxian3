@@ -844,6 +844,67 @@ class XiuxianDB:
                 value TEXT NOT NULL
             );
 
+            CREATE TABLE IF NOT EXISTS admin_meta (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS admin_users (
+                admin_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL UNIQUE,
+                password_hash TEXT NOT NULL,
+                password_salt TEXT NOT NULL,
+                role TEXT NOT NULL DEFAULT 'super_admin',
+                is_active INTEGER NOT NULL DEFAULT 1,
+                failed_login_count INTEGER NOT NULL DEFAULT 0,
+                locked_until TEXT,
+                last_login_at TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS admin_sessions (
+                session_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                admin_id INTEGER NOT NULL,
+                session_token_hash TEXT NOT NULL UNIQUE,
+                expires_at TEXT NOT NULL,
+                last_seen_at TEXT NOT NULL,
+                revoked_at TEXT,
+                ip TEXT NOT NULL DEFAULT '',
+                user_agent TEXT NOT NULL DEFAULT '',
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(admin_id) REFERENCES admin_users(admin_id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS admin_operations (
+                operation_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                request_id TEXT NOT NULL UNIQUE,
+                admin_id INTEGER NOT NULL,
+                action_type TEXT NOT NULL,
+                target_client_id TEXT NOT NULL,
+                target_name_snapshot TEXT NOT NULL DEFAULT '',
+                item_scope TEXT NOT NULL DEFAULT '',
+                item_id_snapshot TEXT NOT NULL DEFAULT '',
+                item_name_snapshot TEXT NOT NULL DEFAULT '',
+                stones_amount INTEGER NOT NULL DEFAULT 0,
+                quantity INTEGER NOT NULL DEFAULT 0,
+                reason TEXT NOT NULL DEFAULT '',
+                note TEXT NOT NULL DEFAULT '',
+                before_json TEXT NOT NULL DEFAULT '{}',
+                after_json TEXT NOT NULL DEFAULT '{}',
+                warnings_json TEXT NOT NULL DEFAULT '[]',
+                rollback_json TEXT NOT NULL DEFAULT '{}',
+                status TEXT NOT NULL,
+                error_message TEXT NOT NULL DEFAULT '',
+                operator_ip TEXT NOT NULL DEFAULT '',
+                user_agent TEXT NOT NULL DEFAULT '',
+                created_at TEXT NOT NULL,
+                confirmed_at TEXT,
+                executed_at TEXT,
+                expires_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+
             CREATE TABLE IF NOT EXISTS physique_defs (
                 physique_id TEXT PRIMARY KEY,
                 name TEXT NOT NULL UNIQUE,
