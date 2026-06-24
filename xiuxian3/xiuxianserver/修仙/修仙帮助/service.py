@@ -14,32 +14,18 @@ HELP_IMAGE = Path(__file__).with_name("help.png")
 
 
 def _help_page_url() -> str:
-    """按 .env 中配置的公开域名生成帮助页地址。"""
+    """按 .env 中配置的公开域名生成帮助页地址。
 
-    port = str(config.server.port)
-    domain = (config.project.domain or "127.0.0.1").strip().rstrip("/")
-    base_url = _with_project_port(domain, port)
-    return f"{base_url}/xiuxian/help"
+    PROJECT_DOMAIN 已配置时直接使用（如 https://example.com），不追加端口；
+    未配置时回退到本地地址 http://127.0.0.1:{port}。
+    """
 
-
-def _with_project_port(domain: str, port: str) -> str:
-    """生成项目访问基地址；80 端口不展示，其他端口自动展示。"""
-
-    if domain.startswith(("http://", "https://")):
-        scheme, rest = domain.split("://", 1)
+    domain = (config.project.domain or "").strip().rstrip("/")
+    if domain:
+        base_url = domain
     else:
-        scheme, rest = "http", domain
-
-    host, _, path = rest.partition("/")
-    hostname = host
-    explicit_port = ""
-    if ":" in host and not host.startswith("["):
-        hostname, explicit_port = host.rsplit(":", 1)
-
-    final_port = explicit_port or port
-    netloc = hostname if final_port == "80" else f"{hostname}:{final_port}"
-    suffix = f"/{path.strip('/')}" if path else ""
-    return f"{scheme}://{netloc}{suffix}".rstrip("/")
+        base_url = f"http://127.0.0.1:{config.server.port}"
+    return f"{base_url}/xiuxian/help"
 
 
 HELP_PAGE_URL = _help_page_url()
