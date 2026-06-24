@@ -197,6 +197,12 @@ RING_ITEM_DEFS = (
     ("qingshen shuijing", "轻身水晶", "宝石", "珍品", 0, "装备", {"explore_bonus": 0.03}, "提高探险效率。"),
     ("jucai zijing", "聚财紫晶", "宝石", "珍品", 0, "装备", {"trade_bonus": 0.02}, "小幅提高跑商收益。"),
     ("kangbao fuwen", "抗暴符文", "宝石", "稀品", 0, "装备", {"crit_resist_bonus": 0.04}, "提高抗暴和承伤稳定性。"),
+    # 坐骑材料
+    ("shou_xue",          "兽血",     "坐骑材料", "普通", 0, "坐骑", {}, "凝聚天地兽类精血，可用于坐骑升星。"),
+    ("shou_hun_dan",      "兽魂丹",   "坐骑材料", "精良", 0, "坐骑", {}, "提炼兽魂凝聚而成，可用于坐骑进阶。"),
+    ("huan_shou_xue",     "幻兽血",   "坐骑材料", "珍稀", 0, "坐骑", {}, "蕴含幻兽本源之力，可用于显化坐骑升星。"),
+    ("huan_shou_hun_dan", "幻兽魂丹", "坐骑材料", "珍稀", 0, "坐骑", {}, "幻兽魂魄凝聚之丹，可用于显化坐骑进阶。"),
+    ("ji_huan_shou_xue",  "极幻兽血", "坐骑材料", "传说", 0, "坐骑", {}, "极境幻兽遗血，可用于极显化坐骑升星。"),
 )
 
 
@@ -296,6 +302,32 @@ SEASONAL_BOSS_REWARD_RATES = (
         0.035,
         "春节、元宵、端午、七夕、中秋、重阳等高权重节日。",
     ),
+)
+
+
+# 坐骑定义种子
+MOUNT_DEFS_SEED = (
+    # 一阶至十阶
+    ("qj_1",  1,  "青角牛", "田间灵牛，青角初生，踏地而行，凡俗中藏仙根", 0, 10, 4,       1, 1,  "(blessing/total)^3", "shou_xue", "shou_hun_dan", "normal", "", "", "qj_2"),
+    ("qj_2",  2,  "墨云驹", "云气缭绕，墨色如夜，初显灵韵", 0, 10, 16,      1, 2,  "(blessing/total)^3", "shou_xue", "shou_hun_dan", "normal", "", "", "qj_3"),
+    ("qj_3",  3,  "霜月鹿", "踏月而行，霜华覆身，仙意渐浓", 0, 10, 64,      1, 3,  "(blessing/total)^3", "shou_xue", "shou_hun_dan", "normal", "", "", "qj_4"),
+    ("qj_4",  4,  "赤瞳狐", "九尾近亲，赤瞳通灵，狡黠灵动", 0, 10, 256,     1, 4,  "(blessing/total)^3", "shou_xue", "shou_hun_dan", "normal", "", "", "qj_5"),
+    ("qj_5",  5,  "玄甲犀", "身披玄铁重甲，力可撼山，刚猛无匹", 0, 10, 1024,    1, 5,  "(blessing/total)^3", "shou_xue", "shou_hun_dan", "normal", "", "", "qj_6"),
+    ("qj_6",  6,  "紫霄鹏", "振翅九霄，紫电缠身，已非凡兽", 0, 10, 4096,    1, 6,  "(blessing/total)^3", "shou_xue", "shou_hun_dan", "normal", "", "", "qj_7"),
+    ("qj_7",  7,  "金焰犼", "犼之真形，金焰焚天，威震八方", 0, 10, 16384,   1, 7,  "(blessing/total)^3", "shou_xue", "shou_hun_dan", "normal", "", "", "qj_8"),
+    ("qj_8",  8,  "苍溟蛟", "半龙之躯，潜于苍溟，呼风唤雨", 0, 10, 65536,   1, 8,  "(blessing/total)^3", "shou_xue", "shou_hun_dan", "normal", "", "", "qj_9"),
+    ("qj_9",  9,  "太虚螭", "螭龙无角，游于太虚，近神之境", 0, 10, 262144,  1, 9,  "(blessing/total)^3", "shou_xue", "shou_hun_dan", "normal", "", "", "qj_10"),
+    ("qj_10", 10, "玉麒麟", "踏四极而镇乾坤，万灵之首", 0, 10, 1048576, 1, 10, "(blessing/total)^3", "shou_xue", "shou_hun_dan", "normal", "", "", ""),
+    # 显化坐骑
+    ("manifest_east",  11, "苍龙吟霄", "生机勃发，春雷化雨", 0, 10, 4194304, 1, 11, "(blessing/total)^3", "huan_shou_xue", "huan_shou_hun_dan", "manifest", "东方·青龙", "生机勃发，春雷化雨", "extreme_east"),
+    ("manifest_west",  12, "庚金啸风", "肃杀凛冽，秋霜断魂", 0, 10, 4194304, 1, 11, "(blessing/total)^3", "huan_shou_xue", "huan_shou_hun_dan", "manifest", "西方·白虎", "肃杀凛冽，秋霜断魂", "extreme_west"),
+    ("manifest_south", 13, "离火焚穹", "涅槃重生，夏阳炽烈", 0, 10, 4194304, 1, 11, "(blessing/total)^3", "huan_shou_xue", "huan_shou_hun_dan", "manifest", "南方·朱雀", "涅槃重生，夏阳炽烈", "extreme_south"),
+    ("manifest_north", 14, "玄冥镇渊", "不动如山，冬水封天", 0, 10, 4194304, 1, 11, "(blessing/total)^3", "huan_shou_xue", "huan_shou_hun_dan", "manifest", "北方·玄武", "不动如山，冬水封天", "extreme_north"),
+    # 极显化坐骑
+    ("extreme_east",  21, "极·苍龙吟霄", "东方生发，春雷化雨润苍冥", 0, 114514, 0, 0, 0, "", "ji_huan_shou_xue", "", "extreme", "东方·青龙", "东方生发，春雷化雨润苍冥", ""),
+    ("extreme_west",  22, "极·庚金啸风", "西极肃杀，秋霜断魂肃太清", 0, 114514, 0, 0, 0, "", "ji_huan_shou_xue", "", "extreme", "西方·白虎", "西极肃杀，秋霜断魂肃太清", ""),
+    ("extreme_south", 23, "极·离火焚穹", "南明涅槃，夏阳炽烈焚劫灰", 0, 114514, 0, 0, 0, "", "ji_huan_shou_xue", "", "extreme", "南方·朱雀", "南明涅槃，夏阳炽烈焚劫灰", ""),
+    ("extreme_north", 24, "极·玄冥镇渊", "北渊归藏，冬水封天凝玄黄", 0, 114514, 0, 0, 0, "", "ji_huan_shou_xue", "", "extreme", "北方·玄武", "北渊归藏，冬水封天凝玄黄", ""),
 )
 
 
@@ -1744,6 +1776,37 @@ class XiuxianDB:
                 created_at TEXT NOT NULL
             );
 
+            CREATE TABLE IF NOT EXISTS mount_defs (
+                mount_id TEXT PRIMARY KEY,
+                tier INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                lore TEXT NOT NULL,
+                initial_stars INTEGER NOT NULL DEFAULT 0,
+                max_stars INTEGER NOT NULL DEFAULT 10,
+                advance_blessing_total INTEGER NOT NULL,
+                advance_blessing_min INTEGER NOT NULL,
+                advance_blessing_max INTEGER NOT NULL,
+                advance_probability_formula TEXT NOT NULL DEFAULT '(blessing/total)^3',
+                star_item_id TEXT NOT NULL,
+                advance_item_id TEXT NOT NULL,
+                mount_type TEXT NOT NULL DEFAULT 'normal',
+                manifest_direction TEXT NOT NULL DEFAULT '',
+                manifest_aphorism TEXT NOT NULL DEFAULT '',
+                post_advance_mount_id TEXT NOT NULL DEFAULT '',
+                created_at TEXT NOT NULL DEFAULT ''
+            );
+
+            CREATE TABLE IF NOT EXISTS player_mounts (
+                client_id TEXT PRIMARY KEY,
+                mount_id TEXT NOT NULL,
+                stars INTEGER NOT NULL DEFAULT 0,
+                blessing_value INTEGER NOT NULL DEFAULT 0,
+                blessing_expires_at TEXT NOT NULL DEFAULT '',
+                manifest_chosen INTEGER NOT NULL DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+
             CREATE INDEX IF NOT EXISTS idx_backpack_client ON backpack_items(client_id);
             CREATE UNIQUE INDEX IF NOT EXISTS idx_players_display_name ON players(display_name);
             CREATE INDEX IF NOT EXISTS idx_ring_client ON ring_items(client_id);
@@ -1917,6 +1980,20 @@ class XiuxianDB:
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
             [(*row[:-2], json.dumps(row[-2], ensure_ascii=False), row[-1]) for row in EXTREME_BOOK_DEFS],
+        )
+        self.conn.executemany(
+            """
+            INSERT OR REPLACE INTO mount_defs
+            (
+                mount_id, tier, name, lore, initial_stars, max_stars,
+                advance_blessing_total, advance_blessing_min, advance_blessing_max,
+                advance_probability_formula, star_item_id, advance_item_id,
+                mount_type, manifest_direction, manifest_aphorism,
+                post_advance_mount_id, created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '')
+            """,
+            MOUNT_DEFS_SEED,
         )
         self.conn.executemany(
             """

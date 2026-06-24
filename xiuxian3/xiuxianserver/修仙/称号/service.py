@@ -629,12 +629,12 @@ class TitleService(CoreService):
         """判断装备是否全部开孔。"""
 
         rows = conn.execute(
-            "SELECT slot, holes_opened FROM equipment WHERE client_id = ?",
+            "SELECT slot, hole_count FROM fixed_equipment WHERE client_id = ?",
             (client_id,),
         ).fetchall()
         if not rows:
             return False
-        return all(int(r["holes_opened"]) >= 1 for r in rows)
+        return all(int(r["hole_count"]) >= 1 for r in rows)
 
     @staticmethod
     def _sect_contribution(conn: sqlite3.Connection, client_id: str) -> int:
@@ -642,7 +642,7 @@ class TitleService(CoreService):
 
         row = conn.execute(
             """
-            SELECT COALESCE(SUM(amount), 0) AS total
+            SELECT COALESCE(SUM(influence), 0) AS total
             FROM sect_contribution_records
             WHERE client_id = ?
             """,

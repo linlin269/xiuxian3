@@ -96,6 +96,9 @@ class PlayerService(CoreService):
         panel.section("装备")
         panel.lines(self._fixed_equipment_lines(client_id))
         panel.hr()
+        panel.section("坐骑")
+        panel.lines(self._mount_profile_lines(client_id, player))
+        panel.hr()
         panel.section("今日加成")
         panel.lines(self._daily_bonus_lines(client_id))
         return panel.render() + T.buttons("休息", "结束休息", "地图")
@@ -563,6 +566,70 @@ class PlayerService(CoreService):
         if not parts:
             return ["无"]
         return parts
+
+    def _mount_profile_lines(self, client_id: str, player: dict) -> list[str]:
+        """生成修仙信息里的坐骑区块。等级 < 10 时返回空。"""
+        level = player.get("level", 0)
+        if level < 10:
+            return ["等级达到 10 级后开启"]
+        mount = self.db.fetch_one(
+            "SELECT * FROM player_mounts WHERE client_id=?", (client_id,)
+        )
+        if not mount:
+            return ["等级达到 10 级后开启"]
+        mount_def = self.db.fetch_one(
+            "SELECT * FROM mount_defs WHERE mount_id=?", (mount["mount_id"],)
+        )
+        if not mount_def:
+            return ["坐骑数据异常"]
+        mt = mount_def["mount_type"]
+        if mt == "extreme":
+            tier_text = "极显化"
+        elif mt == "manifest":
+            tier_text = "显化"
+        else:
+            tier_text = f"{mount_def['tier']}阶"
+
+        # 方向前缀（显化/极显化）
+        direction = mount_def.get("manifest_direction") or ""
+        name = mount_def["name"]
+        stars = mount["stars"]
+        max_stars = mount_def["max_stars"]
+        if direction:
+            line1 = f"{tier_text} · {direction} · {name} ⭐{stars}/{max_stars}"
+        else:
+            line1 = f"{tier_text} · {name} ⭐{stars}/{max_stars}"
+
+        lines = [line1]
+
+        # 意境/大道显化/极境
+        lore = mount_def.get("lore") or ""
+        if lore:
+            if mt == "extreme":
+                lines.append(f"极境：{lore}")
+            elif mt == "manifest":
+                lines.append(f"大道显化：{lore}")
+            else:
+                lines.append(f"意境：{lore}")
+
+        # 进阶祝福值（极显化无进阶）
+        if mt != "extreme":
+            blessing = mount["blessing_value"]
+            total = mount_def.get("advance_blessing_total") or 0
+            if blessing > 0 or mount["blessing_expires_at"]:
+                blessing_text = f"进阶祝福：{blessing}/{total}"
+                expires_at = mount["blessing_expires_at"]
+                if expires_at:
+                    expires = dt(expires_at)
+                    if expires:
+                        remaining = expires - now()
+                        if remaining.total_seconds() > 0:
+                            hours = int(remaining.total_seconds() // 3600)
+                            minutes = int((remaining.total_seconds() % 3600) // 60)
+                            blessing_text += f"（剩余 {hours} 时 {minutes} 分）"
+                lines.append(blessing_text)
+
+        return lines
 
     def _daily_bonus_lines(self, client_id: str) -> list[str]:
         """生成今日气运、天气、灵潮和今日合计加成。"""

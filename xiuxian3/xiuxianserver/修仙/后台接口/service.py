@@ -501,11 +501,40 @@ class AdminBackendService:
         player_public["next_level_text"] = self.core.next_level_text(player_public)
         player_public["display_name"] = str(player_public.get("display_name") or "")
         player_public["source_stones"] = int(player_public.get("source_stones") or 0)
+
+        # 坐骑信息
+        mount_info: dict[str, Any] = {}
+        mount_row = db.fetch_one("SELECT * FROM player_mounts WHERE client_id = ?", (value,))
+        if mount_row:
+            mount_def = db.fetch_one("SELECT * FROM mount_defs WHERE mount_id = ?", (mount_row["mount_id"],))
+            if mount_def:
+                mt = mount_def["mount_type"]
+                if mt == "extreme":
+                    tier_text = "极显化"
+                elif mt == "manifest":
+                    tier_text = "显化"
+                else:
+                    tier_text = f"{mount_def['tier']}阶"
+                direction = mount_def.get("manifest_direction") or ""
+                mount_info = {
+                    "mount_id": mount_row["mount_id"],
+                    "name": mount_def["name"],
+                    "tier_text": tier_text,
+                    "direction": direction,
+                    "stars": mount_row["stars"],
+                    "max_stars": mount_def["max_stars"],
+                    "mount_type": mt,
+                    "lore": mount_def.get("lore") or "",
+                    "blessing_value": mount_row["blessing_value"],
+                    "blessing_expires_at": mount_row["blessing_expires_at"] or "",
+                }
+
         return {
             "player": player_public,
             "source_vault": dict(vault) if vault else {},
             "backpack": backpack,
             "ring": ring,
+            "mount": mount_info,
             "recent_logs": logs,
             "summary": {
                 "backpack_count": len(backpack),
