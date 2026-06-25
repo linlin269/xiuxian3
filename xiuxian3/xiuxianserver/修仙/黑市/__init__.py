@@ -17,9 +17,9 @@ async def ws_black_market_overview(client_id: str, message: str) -> None:
 
 @WsMessageHandler.handler(cmd=("黑市列表", "黑市清单"), priority=100, block=True)
 async def ws_black_market_list(client_id: str, message: str) -> None:
-    """查看黑市商品列表。"""
+    """查看黑市商品列表或单个商品详情。"""
 
-    await send_reply(client_id, service.list_items(client_id), ws_manager, service)
+    await send_reply(client_id, service.list_items(client_id, message), ws_manager, service)
 
 
 @WsMessageHandler.handler(cmd=("黑市购买", "黑市买入"), priority=100, block=True)

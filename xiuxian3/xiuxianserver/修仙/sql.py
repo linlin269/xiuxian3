@@ -1076,6 +1076,21 @@ class XiuxianDB:
                 created_at TEXT NOT NULL
             );
 
+            CREATE TABLE IF NOT EXISTS black_market_records (
+                record_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                client_id TEXT NOT NULL,
+                action TEXT NOT NULL,
+                market_item_id TEXT NOT NULL,
+                ring_item_id TEXT NOT NULL,
+                item_name TEXT NOT NULL,
+                quantity INTEGER NOT NULL,
+                unit_price INTEGER NOT NULL,
+                total_price INTEGER NOT NULL,
+                recycle_rate REAL NOT NULL DEFAULT 0,
+                business_day TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            );
+
             CREATE TABLE IF NOT EXISTS world_locations (
                 x INTEGER NOT NULL,
                 y INTEGER NOT NULL,
@@ -1818,6 +1833,8 @@ class XiuxianDB:
             WHERE equipped = 1;
             CREATE INDEX IF NOT EXISTS idx_physique_level ON physique_defs(level, physique_value);
             CREATE INDEX IF NOT EXISTS idx_trade_records_client ON trade_records(client_id, created_at);
+            CREATE INDEX IF NOT EXISTS idx_black_market_records_client ON black_market_records(client_id, created_at);
+            CREATE INDEX IF NOT EXISTS idx_black_market_records_day ON black_market_records(business_day, action);
             CREATE INDEX IF NOT EXISTS idx_trade_daily_rewards_day ON trade_daily_rewards(business_day);
             CREATE INDEX IF NOT EXISTS idx_trade_heat_day ON trade_heat(business_day, location_name, item_id);
             CREATE INDEX IF NOT EXISTS idx_world_material_records_client ON world_material_records(client_id, created_at);
