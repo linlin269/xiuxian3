@@ -25,6 +25,8 @@ from ..constants import EQUIPMENT_SLOTS, NEWBIE_GIFT_STONES, REST_FAST_SECONDS, 
 from ..rules import rest_recovery_rate, sign_reward
 from ..sect_war import sect_direction_bonus_conn
 from ..sql import db
+from ..光环.service import HALO_STAGE_DEFS
+from ..羽翼.service import WING_STAGE_DEFS
 
 
 class PlayerService(CoreService):
@@ -60,6 +62,7 @@ class PlayerService(CoreService):
         total_attack = int(player["base_attack"]) + weapon_attack
         combat_info = self._current_combat_info(client_id, player, weapon)
         self.refresh_titles(client_id, player)
+        growth = self.db.growth_path(client_id)
 
         panel = T.panel()
         panel.section("状态")
@@ -71,6 +74,8 @@ class PlayerService(CoreService):
         if nemesis_text:
             panel.line(f"死敌：{nemesis_text}")
         panel.line(f"地点：{player['location_name']} ({player['x']},{player['y']})")
+        panel.line(self._growth_status_summary(growth))
+        panel.line(self._growth_cooldown_summary(growth))
         panel.hr()
         panel.section("战力")
         panel.line(f"攻击：**{total_attack}**（基础 {player['base_attack']} + 武器 {weapon_attack}）")
@@ -99,6 +104,9 @@ class PlayerService(CoreService):
         panel.section("坐骑")
         panel.lines(self._mount_profile_lines(client_id, player))
         panel.hr()
+        panel.section("羽翼 / 光环")
+        panel.lines(self._growth_profile_lines(growth))
+        panel.hr()
         panel.section("今日加成")
         panel.lines(self._daily_bonus_lines(client_id))
         return panel.render() + T.buttons("休息", "结束休息", "地图")
@@ -117,6 +125,7 @@ class PlayerService(CoreService):
         total_attack = int(player["base_attack"]) + weapon_attack
         combat_info = self._current_combat_info(client_id, player, weapon)
         self.refresh_titles(client_id, player)
+        growth = self.db.growth_path(client_id)
 
         weapon_text = "未装备"
         if weapon:
@@ -134,6 +143,8 @@ class PlayerService(CoreService):
         panel.line(f"当前武器：{weapon_text}")
         panel.hr()
         panel.line(f"自动用药：{'开启' if player['auto_use_medicine'] else '关闭'}｜战斗日志：{mode_text(player)}")
+        panel.line(self._growth_status_summary(growth))
+        panel.line(self._growth_cooldown_summary(growth))
         panel.line(f"今日加成：{self._daily_bonus_total_text(client_id)}")
         nemesis_text = self._nemesis_text(client_id)
         if nemesis_text:
@@ -664,6 +675,75 @@ class PlayerService(CoreService):
             if line.startswith("今日加成："):
                 return line.replace("今日加成：", "", 1)
         return "无"
+
+    def _growth_profile_lines(self, growth: dict) -> list[str]:
+        """生成羽翼/光环成长线展示。"""
+
+        wing_stage = int(growth.get("wing_stage") or 0)
+        halo_stage = int(growth.get("halo_stage") or 0)
+        shenfa = int(growth.get("shenfa_value") or 0)
+        xinjing = int(growth.get("xinjing_value") or 0)
+        wing_text = self._growth_stage_text(wing_stage, WING_STAGE_DEFS)
+        halo_text = self._growth_stage_text(halo_stage, HALO_STAGE_DEFS)
+        return [
+            f"羽翼：{wing_text}｜身法：**{shenfa}**｜冷却：{self._growth_cooldown_text(str(growth.get('wing_cooldown_until') or ''))}",
+            f"光环：{halo_text}｜心境：**{xinjing}**｜冷却：{self._growth_cooldown_text(str(growth.get('halo_cooldown_until') or ''))}",
+        ]
+
+    def _growth_status_summary(self, growth: dict) -> str:
+        """生成状态面板中的成长线摘要。"""
+
+        wing_stage = int(growth.get("wing_stage") or 0)
+        halo_stage = int(growth.get("halo_stage") or 0)
+        shenfa = int(growth.get("shenfa_value") or 0)
+        xinjing = int(growth.get("xinjing_value") or 0)
+        return (
+            f"羽翼：{self._growth_stage_text(wing_stage, WING_STAGE_DEFS)}｜身法：{shenfa}"
+            f"｜光环：{self._growth_stage_text(halo_stage, HALO_STAGE_DEFS)}｜心境：{xinjing}"
+        )
+
+    def _growth_cooldown_summary(self, growth: dict) -> str:
+        """生成羽翼/光环冷却摘要。"""
+
+        wing_cd = self._growth_cooldown_text(str(growth.get("wing_cooldown_until") or ""))
+        halo_cd = self._growth_cooldown_text(str(growth.get("halo_cooldown_until") or ""))
+        return f"羽翼冷却：{wing_cd}｜光环冷却：{halo_cd}"
+
+    @staticmethod
+    def _growth_stage_text(stage: int, stage_defs: tuple[dict, ...]) -> str:
+        """把成长线阶级整理为展示文本。"""
+
+        current_stage = max(0, int(stage))
+        if current_stage <= 0:
+            return "0阶（未激活）"
+        for row in stage_defs:
+            if int(row.get("stage", 0)) == current_stage:
+                text = f"{current_stage}阶 · {row.get('name', '未命名')}"
+                if current_stage >= 10:
+                    text += "（已满阶）"
+                return text
+        if current_stage >= 10:
+            return f"{current_stage}阶（已满阶）"
+        return f"{current_stage}阶"
+
+    @staticmethod
+    def _growth_cooldown_text(cooldown_until: str) -> str:
+        """格式化羽翼/光环冷却时间。"""
+
+        value = str(cooldown_until or "")
+        if not value:
+            return "无"
+        target = dt(value)
+        if not target:
+            return "无"
+        left = int((target - now()).total_seconds())
+        if left <= 0:
+            return "无"
+        hours, remain = divmod(left, 3600)
+        minutes = max(1, remain // 60 if remain % 60 == 0 else remain // 60 + 1)
+        if hours > 0:
+            return f"剩余 {hours} 小时 {minutes} 分"
+        return f"剩余 {minutes} 分"
 
     def _nemesis_text(self, client_id: str) -> str:
         """读取当前对玩家仇恨最高的人，并换算报复指数。"""

@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import sqlite3
 from datetime import timedelta
+from importlib import import_module
 
 from .. import combat_log_text
 from ..combat_core import service as combat_service
@@ -101,12 +103,17 @@ RECYCLE_TYPE_LABELS = {
 }
 
 
+WING_BREAKTHROUGH_COMMON_LOCATIONS = {"碧潮岛", "星陨墟", "太虚秘境"}
+
+
 class ExplorationService(CoreService):
     """30 分钟探险预计算和领取。"""
 
     def __init__(self, database) -> None:
         super().__init__(database)
         self.world_material = WorldMaterialService(database)
+        self._wing_service = None
+        self._halo_service = None
 
     def locations(self, client_id: str) -> str:
         """查看探险地点。"""
@@ -270,6 +277,7 @@ class ExplorationService(CoreService):
         result = self._precompute(client_id, explore_player)
         started = now()
         ready = started + timedelta(seconds=self._result_duration_seconds(result))
+        breakthrough_text = ""
         with self.db.transaction() as conn:
             active = conn.execute(
                 """
@@ -308,6 +316,10 @@ class ExplorationService(CoreService):
                 return T.hint("当前状态已变化，不能开始探险。", "发送：修仙信息 查看当前状态后再操作。<修仙信息>")
             for item_id, quantity in result.get("medicine_used", {}).items():
                 self.remove_ring_conn(conn, client_id, item_id, int(quantity))
+            breakthrough_state = self._handle_growth_breakthroughs(conn, client_id, str(location["name"]))
+            breakthrough_text = str(breakthrough_state.get("text") or "")
+            if breakthrough_state.get("pending"):
+                result["growth_breakthrough"] = breakthrough_state["pending"]
             conn.execute(
                 """
                 INSERT INTO exploration_records
@@ -318,7 +330,10 @@ class ExplorationService(CoreService):
             )
         auto_state = "开启" if player["auto_use_medicine"] else "关闭"
         duration_text = self._result_duration_text(result)
-        return f"开始探险：{location['name']}。自动用药：{auto_state}。{duration_text}后可结算。<探险状态>"
+        start_text = f"开始探险：{location['name']}。自动用药：{auto_state}。{duration_text}后可结算。<探险状态>"
+        if breakthrough_text:
+            return f"{start_text}\n{breakthrough_text}"
+        return start_text
 
     def status(self, client_id: str) -> str:
         """查看探险状态。"""
@@ -378,7 +393,24 @@ class ExplorationService(CoreService):
             panel.line("预计收获：暂无掉落")
         if summary["medicine_text"]:
             panel.line(f"自动用药：{summary['medicine_text']}")
-        return T.attach(panel.render(), f"{action}<结束探险>")
+        pending_breakthrough = result.get("growth_breakthrough") if isinstance(result.get("growth_breakthrough"), dict) else None
+        buttons = ("结束探险",)
+        if pending_breakthrough and not pending_breakthrough.get("resolved"):
+            panel.hr()
+            panel.section("感悟待处理")
+            panel.line(f"当前感悟：{pending_breakthrough.get('system_label', '突破感悟')} · {pending_breakthrough.get('title', '突破感悟')}")
+            attr_label = str(pending_breakthrough.get("attr_label") or "")
+            attr_value = pending_breakthrough.get("attr_value")
+            success_rate = pending_breakthrough.get("success_rate")
+            if attr_label and attr_value is not None:
+                try:
+                    rate_text = f"{float(success_rate):.2%}"
+                except (TypeError, ValueError):
+                    rate_text = "未知"
+                panel.line(f"锁定属性：**{attr_value}** {attr_label}｜锁定成功率：**{rate_text}**")
+            panel.line("请先发送：放弃感悟 或 尝试感悟。")
+            buttons = ("放弃感悟", "尝试感悟", "结束探险")
+        return T.attach(panel.render(), f"{action}<结束探险>", buttons=buttons)
 
     def claim(self, client_id: str) -> str | dict:
         """领取探险结果。"""
@@ -391,6 +423,12 @@ class ExplorationService(CoreService):
         if not record:
             return T.hint("当前没有可领取探险。", "发送：探险 开始一轮，或发送：探险记录 查看历史。<探险>")
         result = load_json(record["result"], {})
+        pending_breakthrough = result.get("growth_breakthrough") if isinstance(result.get("growth_breakthrough"), dict) else None
+        if pending_breakthrough and not pending_breakthrough.get("resolved"):
+            return T.hint(
+                "当前还有待处理的感悟，先完成放弃感悟 / 尝试感悟后再领取。",
+                "发送：放弃感悟 或 尝试感悟，处理完后再发送：结束探险。<放弃感悟><尝试感悟><探险状态>",
+            )
         stored_ready_at = self._time(record["ready_at"])
         ready_at = self._effective_ready_at(record, result)
         if ready_at < stored_ready_at:
@@ -410,6 +448,12 @@ class ExplorationService(CoreService):
                 return T.hint("当前没有可领取探险。", "发送：探险 开始一轮，或发送：探险记录 查看历史。<探险>")
             record = dict(active)
             result = load_json(record["result"], {})
+            pending_breakthrough = result.get("growth_breakthrough") if isinstance(result.get("growth_breakthrough"), dict) else None
+            if pending_breakthrough and not pending_breakthrough.get("resolved"):
+                return T.hint(
+                    "当前还有待处理的感悟，先完成放弃感悟 / 尝试感悟后再领取。",
+                    "发送：放弃感悟 或 尝试感悟，处理完后再发送：结束探险。<放弃感悟><尝试感悟><探险状态>",
+                )
             ready_at = self._effective_ready_at(record, result)
             if ready_at and now() < ready_at:
                 left = max(1, int((ready_at - now()).total_seconds() // 60) + 1)
@@ -428,6 +472,8 @@ class ExplorationService(CoreService):
             weapon_exp_total = settlement["weapon_exp_total"]
             drops = settlement["drops"]
             ring_drops = settlement["ring_drops"]
+            snapshot_hp = settlement["snapshot_hp"]
+            snapshot_mp = settlement["snapshot_mp"]
             hp_left = settlement["hp_left"]
             mp_left = settlement["mp_left"]
             dead = settlement["dead"]
@@ -474,8 +520,24 @@ class ExplorationService(CoreService):
             elif flame_result.get("compensation"):
                 comp = flame_result["compensation"]
                 flame_text = flame_service.compensation_text(comp["flame_name"], comp.get("reason", ""))
-            final_hp = max(1, hp_left)
-            final_mp = 0 if hp_left <= 0 else max(0, mp_left)
+            wing_service = self._wing_service_or_none()
+            halo_service = self._halo_service_or_none()
+            wing_growth = (
+                wing_service.maybe_gain_explore_shenfa_conn(conn, client_id)
+                if wing_service
+                else {"gained": False, "message": ""}
+            )
+            halo_growth = (
+                halo_service.maybe_gain_explore_xinjing_conn(conn, client_id)
+                if halo_service
+                else {"gained": False, "message": ""}
+            )
+            player_hp = int(player["hp"])
+            player_mp = int(player["mp"])
+            hp_delta = max(0, int(snapshot_hp) - int(hp_left))
+            mp_delta = max(0, int(snapshot_mp) - int(mp_left))
+            final_hp = 1 if dead else max(1, player_hp - hp_delta)
+            final_mp = 0 if dead else max(0, player_mp - mp_delta)
             conn.execute(
                 """
                 UPDATE players
@@ -528,13 +590,203 @@ class ExplorationService(CoreService):
             dead=dead,
             bag_full=bool(result.get("bag_full")),
         )
-        # 追加异火掉落信息到结算消息
+        extras: list[str] = []
         if flame_text:
+            extras.append(f"🔥 {flame_text}")
+        if wing_growth.get("gained") and wing_growth.get("message"):
+            extras.append(f"🪽 {wing_growth['message']}")
+        if halo_growth.get("gained") and halo_growth.get("message"):
+            extras.append(f"✨ {halo_growth['message']}")
+        if extras:
             if isinstance(log, str):
-                log = log + f"\n🔥 {flame_text}"
+                log = log + "\n" + "\n".join(extras)
             elif isinstance(log, dict):
-                log.setdefault("extra", []).append(flame_text)
+                log.setdefault("extra", []).extend(extras)
         return log
+
+    def breakthrough_choice(self, client_id: str, message: str) -> str | dict:
+        """处理探险中的羽翼/光环正式双按钮选择。"""
+
+        player, error = self.require_player(client_id)
+        if error:
+            return error
+        assert player is not None
+        text = str(message or "").strip()
+        if text not in {"放弃感悟", "尝试感悟"}:
+            return T.hint("感悟选择不正确。", "发送：放弃感悟 或 尝试感悟。<放弃感悟><尝试感悟>")
+        normalized_choice = "give_up" if text == "放弃感悟" else "try"
+        with self.db.transaction() as conn:
+            active = conn.execute(
+                "SELECT * FROM exploration_records WHERE client_id = ? AND claimed = 0 ORDER BY started_at DESC LIMIT 1",
+                (client_id,),
+            ).fetchone()
+            if not active:
+                return T.hint("当前没有可处理的感悟。", "先发送：探险 开始一轮，再选择感悟。<探险>")
+            record = dict(active)
+            result = load_json(record["result"], {})
+            pending_breakthrough = result.get("growth_breakthrough") if isinstance(result.get("growth_breakthrough"), dict) else None
+            if not pending_breakthrough:
+                return T.hint("当前没有待处理的感悟。", "发送：探险状态 查看当前进度。<探险状态>")
+            if pending_breakthrough.get("resolved"):
+                return T.hint("这次感悟已经处理过了。", "发送：探险状态 查看当前进度。<探险状态>")
+            system_type = str(pending_breakthrough.get("system_type") or "")
+            location_name = str(pending_breakthrough.get("location_name") or record["location_name"])
+            if system_type == "wing":
+                service = self._wing_service_or_none()
+            elif system_type == "halo":
+                service = self._halo_service_or_none()
+            else:
+                service = None
+            if not service:
+                return T.hint("当前感悟系统不可用。", "稍后重试，或发送：探险状态 查看当前进度。<探险状态>")
+            outcome = service.apply_breakthrough_choice(
+                client_id,
+                location_name,
+                normalized_choice,
+                conn=conn,
+                pending_snapshot=pending_breakthrough,
+            )
+            if not outcome.get("triggered"):
+                return outcome.get("message") or T.hint("感悟结算未能完成。", "发送：探险状态 查看当前进度。<探险状态>")
+            pending_breakthrough = dict(pending_breakthrough)
+            pending_breakthrough["resolved"] = True
+            pending_breakthrough["choice"] = normalized_choice
+            pending_breakthrough["resolved_at"] = ts()
+            pending_breakthrough["success"] = bool(outcome.get("success"))
+            result["growth_breakthrough"] = pending_breakthrough
+            conn.execute(
+                "UPDATE exploration_records SET result = ? WHERE record_id = ? AND claimed = 0",
+                (dump_json(result), record["record_id"]),
+            )
+            return outcome.get("message") or ""
+
+    def _wing_service_or_none(self):
+        if self._wing_service is None:
+            try:
+                module = import_module("..羽翼.service", __package__)
+                self._wing_service = getattr(module, "service", False)
+            except Exception:
+                self._wing_service = False
+        return self._wing_service or None
+
+    def _halo_service_or_none(self):
+        if self._halo_service is None:
+            try:
+                module = import_module("..光环.service", __package__)
+                self._halo_service = getattr(module, "service", False)
+            except Exception:
+                self._halo_service = False
+        return self._halo_service or None
+
+    def _handle_growth_breakthroughs(self, conn, client_id: str, location_name: str) -> dict:
+        wing_service = self._wing_service_or_none()
+        halo_service = self._halo_service_or_none()
+        if not wing_service and not halo_service:
+            return {"text": "", "pending": None}
+
+        sections: list[str] = []
+        eligible: list[dict] = []
+        common_location = location_name in WING_BREAKTHROUGH_COMMON_LOCATIONS
+
+        if wing_service:
+            wing_context = wing_service.build_explore_breakthrough_context(client_id, location_name, conn=conn)
+            if wing_context.get("auto_unlock_text"):
+                sections.append(str(wing_context["auto_unlock_text"]))
+            wing_event = wing_context.get("event") or {}
+            if wing_context.get("eligible") and int(wing_context.get("stage", 0)) < 10:
+                eligible.append(
+                    {
+                        "system_type": "wing",
+                        "service": wing_service,
+                        "context": wing_context,
+                        "exclusive": str(wing_event.get("exclusive_location", "")) == location_name,
+                    }
+                )
+
+        if halo_service:
+            halo_context = halo_service.build_explore_breakthrough_context(client_id, location_name, conn=conn)
+            if halo_context.get("auto_unlock_text"):
+                sections.append(str(halo_context["auto_unlock_text"]))
+            halo_event = halo_context.get("event") or {}
+            if halo_context.get("eligible") and int(halo_context.get("stage", 0)) < 10:
+                eligible.append(
+                    {
+                        "system_type": "halo",
+                        "service": halo_service,
+                        "context": halo_context,
+                        "exclusive": str(halo_event.get("exclusive_location", "")) == location_name,
+                    }
+                )
+
+        if not eligible:
+            return {"text": "\n".join(sections), "pending": None}
+
+        if common_location:
+            candidates = eligible
+        else:
+            exclusive_candidates = [item for item in eligible if item["exclusive"]]
+            candidates = exclusive_candidates or eligible
+
+        chosen = random.choice(candidates) if len(candidates) > 1 else candidates[0]
+        outcome = chosen["service"].try_trigger_breakthrough(
+            client_id,
+            location_name,
+            conn=conn,
+            context_snapshot=chosen["context"],
+        )
+        if not outcome.get("triggered"):
+            return {"text": "\n".join(sections), "pending": None}
+
+        context = outcome.get("context") or chosen["context"] or {}
+        event = context.get("event") or {}
+        attr_value = context.get("shenfa_value", context.get("xinjing_value", 0))
+        rate = float(context.get("success_rate", 0.0))
+        sections.append(str(outcome.get("message") or ""))
+        title = str(event.get("title") or "突破感悟")
+        system_label = "羽翼" if chosen["system_type"] == "wing" else "光环"
+        attr_label = "身法" if chosen["system_type"] == "wing" else "心境"
+        sections.append(f"本次在 {location_name} 触发 {title}，当前{system_label}感悟已接入正式双按钮。")
+        sections.append(
+            f"锁定{attr_label} **{attr_value}**｜锁定成功率 **{rate:.2%}**。请直接选择 `放弃感悟` 或 `尝试感悟` 完成本次结算。"
+        )
+        pending = self._serialize_growth_breakthrough(
+            system_type=chosen["system_type"],
+            system_label=system_label,
+            location_name=location_name,
+            context=context,
+            event=event,
+            attr_value=attr_value,
+            success_rate=rate,
+        )
+        return {"text": "\n".join(text for text in sections if text), "pending": pending}
+
+    @staticmethod
+    def _serialize_growth_breakthrough(
+        *,
+        system_type: str,
+        system_label: str,
+        location_name: str,
+        context: dict,
+        event: dict,
+        attr_value: int | float,
+        success_rate: float,
+    ) -> dict:
+        attr_label = "身法" if system_type == "wing" else "心境"
+        return {
+            "system_type": system_type,
+            "system_label": system_label,
+            "location_name": location_name,
+            "event_code": str(event.get("event_code") or ""),
+            "title": str(event.get("title") or "突破感悟"),
+            "from_stage": int(event.get("from_stage") or context.get("stage") or 0),
+            "to_stage": int(event.get("to_stage") or 0),
+            "require_attr": int(event.get("require_attr") or 0),
+            "attr_label": attr_label,
+            "attr_value": int(attr_value),
+            "success_rate": float(success_rate),
+            "event": dict(event),
+            "resolved": False,
+        }
 
     def records(self, client_id: str) -> str:
         """查看最近探险记录。"""
@@ -592,6 +844,7 @@ class ExplorationService(CoreService):
         explore_bonus = min(0.2, self.equipment_bonuses(client_id).get("explore_bonus", 0))
         medicine_stock = self._medicine_stock(client_id) if player["auto_use_medicine"] else {}
         medicine_used: dict[str, int] = {}
+        stable_bonus = self._explore_stable_bonus(str(player["client_id"]))
         for _event_index in range(fight_count):
             hp_left, mp_left = self._auto_use_medicine(
                 hp_left,
@@ -599,6 +852,7 @@ class ExplorationService(CoreService):
                 player,
                 medicine_stock,
                 medicine_used,
+                stable_bonus,
             )
             monster = dict(random.choice(monsters))
             monster["drop_item_id"] = self._roll_monster_loot_item(monster)
@@ -629,6 +883,7 @@ class ExplorationService(CoreService):
                 player,
                 medicine_stock,
                 medicine_used,
+                stable_bonus,
             )
             event["hp_left"] = hp_left
             event["mp_left"] = mp_left
@@ -705,9 +960,10 @@ class ExplorationService(CoreService):
         medicine_stock = self._medicine_stock(client_id) if player["auto_use_medicine"] else {}
         medicine_used: dict[str, int] = {}
         environment = self._secret_realm_environment()
+        stable_bonus = self._explore_stable_bonus(str(player["client_id"]))
 
         for _ in range(SECRET_REALM_MAX_ENCOUNTERS):
-            hp_left, mp_left = self._auto_use_medicine(hp_left, mp_left, player, medicine_stock, medicine_used)
+            hp_left, mp_left = self._auto_use_medicine(hp_left, mp_left, player, medicine_stock, medicine_used, stable_bonus)
             monster = self._secret_realm_actor(player, templates, environment)
             event = combat_service.fight_secret_realm_actor(client_id, monster, start_hp=hp_left, start_mp=mp_left)
             self._scale_secret_realm_exp(event)
@@ -735,7 +991,7 @@ class ExplorationService(CoreService):
                     secret_realm=environment,
                 )
 
-            hp_left, mp_left = self._auto_use_medicine(hp_left, mp_left, player, medicine_stock, medicine_used)
+            hp_left, mp_left = self._auto_use_medicine(hp_left, mp_left, player, medicine_stock, medicine_used, stable_bonus)
             event["hp_left"] = hp_left
             event["mp_left"] = mp_left
 
@@ -1391,6 +1647,7 @@ class ExplorationService(CoreService):
         player: dict,
         stock: dict[str, dict],
         used: dict[str, int],
+        stable_bonus: float,
     ) -> tuple[int, int]:
         """按阈值自动使用恢复药。
 
@@ -1404,15 +1661,19 @@ class ExplorationService(CoreService):
 
         max_hp = int(player["max_hp"])
         max_mp = int(player["max_mp"])
-        with self.db.transaction() as conn:
-            support_bonus = sect_direction_bonus_conn(conn, str(player["client_id"]), "support")
-            build_bonus = sect_direction_bonus_conn(conn, str(player["client_id"]), "build")
-        stable_bonus = min(0.05, support_bonus * 0.04 + build_bonus * 0.025)
         if hp > 0 and hp <= int(max_hp * (0.45 + stable_bonus)):
             hp = self._recover_value(hp, max_hp, "hp", stock, used, int(max_hp * (0.75 + stable_bonus)))
         if mp <= int(max_mp * (0.30 + stable_bonus)):
             mp = self._recover_value(mp, max_mp, "mp", stock, used, int(max_mp * (0.65 + stable_bonus)))
         return hp, mp
+
+    def _explore_stable_bonus(self, client_id: str) -> float:
+        """读取本轮探险固定使用的宗门稳定加成。"""
+
+        with self.db.transaction() as conn:
+            support_bonus = sect_direction_bonus_conn(conn, client_id, "support")
+            build_bonus = sect_direction_bonus_conn(conn, client_id, "build")
+        return min(0.05, support_bonus * 0.04 + build_bonus * 0.025)
 
     def _recover_value(
         self,
@@ -1468,8 +1729,11 @@ class ExplorationService(CoreService):
         weapon_exp_total = self._weapon_exp_total(events)
         drops: dict[str, int] = {}
         ring_drops: dict[str, int] = {}
-        hp_left = int(player["hp"])
-        mp_left = int(player["mp"])
+        snapshot = result.get("player_snapshot") if isinstance(result.get("player_snapshot"), dict) else {}
+        snapshot_hp = int(snapshot.get("hp", player["hp"]))
+        snapshot_mp = int(snapshot.get("mp", player["mp"]))
+        hp_left = snapshot_hp
+        mp_left = snapshot_mp
         dead = False
         for event in events:
             hp_left = int(event.get("hp_left", hp_left))
@@ -1493,6 +1757,8 @@ class ExplorationService(CoreService):
             "weapon_exp_total": weapon_exp_total,
             "drops": drops,
             "ring_drops": ring_drops,
+            "snapshot_hp": snapshot_hp,
+            "snapshot_mp": snapshot_mp,
             "hp_left": hp_left,
             "mp_left": mp_left,
             "dead": dead,

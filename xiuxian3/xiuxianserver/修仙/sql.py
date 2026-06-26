@@ -1822,6 +1822,19 @@ class XiuxianDB:
                 updated_at TEXT NOT NULL
             );
 
+            CREATE TABLE IF NOT EXISTS player_growth_paths (
+                client_id TEXT PRIMARY KEY,
+                wing_stage INTEGER NOT NULL DEFAULT 0,
+                halo_stage INTEGER NOT NULL DEFAULT 0,
+                shenfa_value INTEGER NOT NULL DEFAULT 0,
+                xinjing_value INTEGER NOT NULL DEFAULT 0,
+                shenfa_blood_accum INTEGER NOT NULL DEFAULT 0,
+                xinjing_spirit_accum INTEGER NOT NULL DEFAULT 0,
+                wing_cooldown_until TEXT NOT NULL DEFAULT '',
+                halo_cooldown_until TEXT NOT NULL DEFAULT '',
+                updated_at TEXT NOT NULL
+            );
+
             CREATE INDEX IF NOT EXISTS idx_backpack_client ON backpack_items(client_id);
             CREATE UNIQUE INDEX IF NOT EXISTS idx_players_display_name ON players(display_name);
             CREATE INDEX IF NOT EXISTS idx_ring_client ON ring_items(client_id);
@@ -2379,6 +2392,135 @@ class XiuxianDB:
 
         if missing:
             raise RuntimeError("修仙基础配置错误：\n" + "\n".join(missing))
+
+    def ensure_player_growth_path(self, client_id: str) -> dict[str, Any]:
+        """确保玩家成长支线档案存在并返回。"""
+
+        with self.transaction() as conn:
+            row = self.ensure_player_growth_path_conn(conn, client_id)
+            return dict(row)
+
+    def growth_path(self, client_id: str) -> dict[str, Any]:
+        """读取玩家成长支线档案；不存在时自动补齐。"""
+
+        return self.ensure_player_growth_path(client_id)
+
+    def ensure_player_growth_path_conn(self, conn: sqlite3.Connection, client_id: str) -> sqlite3.Row:
+        """事务内确保玩家成长支线档案存在。"""
+
+        current_ts = ts()
+        conn.execute(
+            """
+            INSERT OR IGNORE INTO player_growth_paths (
+                client_id,
+                wing_stage,
+                halo_stage,
+                shenfa_value,
+                xinjing_value,
+                shenfa_blood_accum,
+                xinjing_spirit_accum,
+                wing_cooldown_until,
+                halo_cooldown_until,
+                updated_at
+            )
+            VALUES (?, 0, 0, 0, 0, 0, 0, '', '', ?)
+            """,
+            (client_id, current_ts),
+        )
+        row = conn.execute(
+            "SELECT * FROM player_growth_paths WHERE client_id = ?",
+            (client_id,),
+        ).fetchone()
+        assert row is not None
+        return row
+
+    def _update_growth_path_conn(self, conn: sqlite3.Connection, client_id: str, **fields: Any) -> None:
+        """事务内更新玩家成长支线字段。"""
+
+        if not fields:
+            return
+        self.ensure_player_growth_path_conn(conn, client_id)
+        fields["updated_at"] = ts()
+        sets = ", ".join(f"{key} = ?" for key in fields)
+        params = [*fields.values(), client_id]
+        conn.execute(f"UPDATE player_growth_paths SET {sets} WHERE client_id = ?", params)
+
+    def set_wing_stage_conn(self, conn: sqlite3.Connection, client_id: str, stage: int) -> int:
+        """事务内设置羽翼阶级。"""
+
+        value = max(0, int(stage))
+        self._update_growth_path_conn(conn, client_id, wing_stage=value)
+        return value
+
+    def set_halo_stage_conn(self, conn: sqlite3.Connection, client_id: str, stage: int) -> int:
+        """事务内设置光环阶级。"""
+
+        value = max(0, int(stage))
+        self._update_growth_path_conn(conn, client_id, halo_stage=value)
+        return value
+
+    def add_shenfa_conn(self, conn: sqlite3.Connection, client_id: str, amount: int) -> int:
+        """事务内增加身法。"""
+
+        row = self.ensure_player_growth_path_conn(conn, client_id)
+        value = max(0, int(row["shenfa_value"]) + int(amount))
+        self._update_growth_path_conn(conn, client_id, shenfa_value=value)
+        return value
+
+    def add_xinjing_conn(self, conn: sqlite3.Connection, client_id: str, amount: int) -> int:
+        """事务内增加心境。"""
+
+        row = self.ensure_player_growth_path_conn(conn, client_id)
+        value = max(0, int(row["xinjing_value"]) + int(amount))
+        self._update_growth_path_conn(conn, client_id, xinjing_value=value)
+        return value
+
+    def add_shenfa_blood_accum_conn(self, conn: sqlite3.Connection, client_id: str, amount: int) -> int:
+        """事务内增加身法血气累计池。"""
+
+        row = self.ensure_player_growth_path_conn(conn, client_id)
+        value = max(0, int(row["shenfa_blood_accum"]) + int(amount))
+        self._update_growth_path_conn(conn, client_id, shenfa_blood_accum=value)
+        return value
+
+    def add_xinjing_spirit_accum_conn(self, conn: sqlite3.Connection, client_id: str, amount: int) -> int:
+        """事务内增加心境精神累计池。"""
+
+        row = self.ensure_player_growth_path_conn(conn, client_id)
+        value = max(0, int(row["xinjing_spirit_accum"]) + int(amount))
+        self._update_growth_path_conn(conn, client_id, xinjing_spirit_accum=value)
+        return value
+
+    def set_wing_cooldown_conn(self, conn: sqlite3.Connection, client_id: str, cooldown_until: str) -> str:
+        """事务内设置羽翼冷却。"""
+
+        value = str(cooldown_until or "")
+        self._update_growth_path_conn(conn, client_id, wing_cooldown_until=value)
+        return value
+
+    def set_halo_cooldown_conn(self, conn: sqlite3.Connection, client_id: str, cooldown_until: str) -> str:
+        """事务内设置光环冷却。"""
+
+        value = str(cooldown_until or "")
+        self._update_growth_path_conn(conn, client_id, halo_cooldown_until=value)
+        return value
+
+    def set_growth_accum_conn(
+        self,
+        conn: sqlite3.Connection,
+        client_id: str,
+        *,
+        shenfa_blood_accum: int | None = None,
+        xinjing_spirit_accum: int | None = None,
+    ) -> None:
+        """事务内批量设置成长累计池。"""
+
+        fields: dict[str, Any] = {}
+        if shenfa_blood_accum is not None:
+            fields["shenfa_blood_accum"] = max(0, int(shenfa_blood_accum))
+        if xinjing_spirit_accum is not None:
+            fields["xinjing_spirit_accum"] = max(0, int(xinjing_spirit_accum))
+        self._update_growth_path_conn(conn, client_id, **fields)
 
     def ensure_fixed_equipment(self, client_id: str) -> None:
         """确保玩家装备位存在。"""

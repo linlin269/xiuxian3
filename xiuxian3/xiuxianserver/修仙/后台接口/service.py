@@ -12,7 +12,8 @@ from threading import RLock
 from typing import Any
 
 from ..common import CoreService, dt, now, row_value, ts, validate_name
-from ..rules import money
+from ..constants import MAX_LEVEL
+from ..rules import level_from_exp, money, player_exp_for_level
 from ..sql import db
 
 BACKEND_SERVER_DIR = Path(__file__).resolve().parents[2]
@@ -27,7 +28,7 @@ SESSION_TTL_SECONDS = 7 * 24 * 60 * 60
 LOGIN_LOCK_THRESHOLD = 5
 LOGIN_LOCK_MINUTES = 30
 OPERATION_TTL_SECONDS = 30 * 60
-VALID_ACTIONS = {"grant_stones", "grant_item"}
+VALID_ACTIONS = {"grant_stones", "grant_item", "grant_exp"}
 VALID_ITEM_SCOPES = {"backpack", "ring"}
 
 
@@ -168,10 +169,25 @@ class AdminLogDB:
             self.conn.commit()
             return int(cursor.lastrowid)
 
-    def recent_logs(self, limit: int = 20) -> list[dict[str, Any]]:
-        """读取最新日志。"""
+    def recent_logs(self, limit: int = 20, date_from: str = "", date_to: str = "") -> list[dict[str, Any]]:
+        """读取最新日志，可选按日期范围筛选。"""
 
         safe_limit = max(1, min(int(limit), 200))
+        if date_from or date_to:
+            conditions: list[str] = []
+            params: list[Any] = []
+            if date_from:
+                conditions.append("created_at >= ?")
+                params.append(date_from)
+            if date_to:
+                conditions.append("created_at <= ?")
+                params.append(date_to + "T23:59:59")
+            where = " AND ".join(conditions)
+            params.append(safe_limit)
+            return self.fetch_all(
+                f"SELECT * FROM admin_operation_logs WHERE {where} ORDER BY log_id DESC LIMIT ?",
+                tuple(params),
+            )
         return self.fetch_all(
             "SELECT * FROM admin_operation_logs ORDER BY log_id DESC LIMIT ?",
             (safe_limit,),
@@ -614,6 +630,9 @@ class AdminBackendService:
         item_scope = _text(payload.get("item_scope")).lower()
         stones_amount = max(0, self._payload_int(payload, "stones_amount"))
         quantity = max(0, self._payload_int(payload, "quantity"))
+        exp_amount = max(0, self._payload_int(payload, "exp_amount"))
+        if action_type == "grant_exp":
+            quantity = exp_amount
         reason = _text(payload.get("reason")) or "后台发放"
         note = _text(payload.get("note"))
         created_at = ts()
@@ -628,6 +647,7 @@ class AdminBackendService:
                 item_scope=item_scope,
                 stones_amount=stones_amount,
                 quantity=quantity,
+                exp_amount=exp_amount,
                 reason=reason,
                 note=note,
             )
@@ -914,20 +934,43 @@ class AdminBackendService:
                 "operation_id": operation_id,
             }
 
-    def list_operations(self, limit: int = 20) -> list[dict[str, Any]]:
-        """读取后台操作记录。"""
+    def list_operations(self, limit: int = 20, date_from: str = "", date_to: str = "") -> list[dict[str, Any]]:
+        """读取后台操作记录，可选按日期范围筛选。"""
 
         safe_limit = max(1, min(int(limit), 100))
-        rows = db.fetch_all(
-            """
-            SELECT o.*, u.username AS admin_username
-            FROM admin_operations o
-            LEFT JOIN admin_users u ON u.admin_id = o.admin_id
-            ORDER BY o.operation_id DESC
-            LIMIT ?
-            """,
-            (safe_limit,),
-        )
+        if date_from or date_to:
+            conditions: list[str] = []
+            params: list[Any] = []
+            if date_from:
+                conditions.append("o.created_at >= ?")
+                params.append(date_from)
+            if date_to:
+                conditions.append("o.created_at <= ?")
+                params.append(date_to + "T23:59:59")
+            where = " AND ".join(conditions)
+            params.append(safe_limit)
+            rows = db.fetch_all(
+                f"""
+                SELECT o.*, u.username AS admin_username
+                FROM admin_operations o
+                LEFT JOIN admin_users u ON u.admin_id = o.admin_id
+                WHERE {where}
+                ORDER BY o.operation_id DESC
+                LIMIT ?
+                """,
+                tuple(params),
+            )
+        else:
+            rows = db.fetch_all(
+                """
+                SELECT o.*, u.username AS admin_username
+                FROM admin_operations o
+                LEFT JOIN admin_users u ON u.admin_id = o.admin_id
+                ORDER BY o.operation_id DESC
+                LIMIT ?
+                """,
+                (safe_limit,),
+            )
         return [self._operation_row_to_public(row) for row in rows]
 
     def get_operation_detail(self, operation_id: int) -> dict[str, Any]:
@@ -957,6 +1000,7 @@ class AdminBackendService:
         item_scope: str,
         stones_amount: int,
         quantity: int,
+        exp_amount: int = 0,
         reason: str,
         note: str,
     ) -> dict[str, Any]:
@@ -999,6 +1043,47 @@ class AdminBackendService:
                     "action_type": action_type,
                     "target_client_id": player_id,
                     "stones_amount": stones_amount,
+                },
+            }
+
+        if action_type == "grant_exp":
+            if exp_amount <= 0:
+                raise AdminOperationError("发放经验数量必须大于 0。")
+            before_level = int(player.get("level") or 1)
+            before_exp = int(player.get("exp") or 0)
+            cap_exp = player_exp_for_level(MAX_LEVEL)
+            after_exp = min(cap_exp, before_exp + exp_amount)
+            after_level = level_from_exp(after_exp)
+            warnings: list[str] = []
+            if after_level > before_level:
+                warnings.append(f"玩家将从 {before_level} 级升到 {after_level} 级。")
+            if after_exp >= cap_exp:
+                warnings.append(f"经验已达到满级封顶值 {cap_exp}。")
+            return {
+                "target_client_id": player_id,
+                "target_name_snapshot": player_name,
+                "item_scope": "",
+                "item_id_snapshot": "",
+                "item_name_snapshot": "",
+                "before": {
+                    "level": before_level,
+                    "exp": before_exp,
+                    "display_name": player_name,
+                    "reason": reason,
+                    "note": note,
+                },
+                "after": {
+                    "level": after_level,
+                    "exp": after_exp,
+                    "display_name": player_name,
+                    "reason": reason,
+                    "note": note,
+                },
+                "warnings": warnings,
+                "rollback": {
+                    "action_type": action_type,
+                    "target_client_id": player_id,
+                    "exp_amount": exp_amount,
                 },
             }
 
@@ -1112,6 +1197,21 @@ class AdminBackendService:
             return {
                 "before": {"source_stones": before_stones},
                 "after": {"source_stones": after_stones},
+            }
+
+        if action_type == "grant_exp":
+            player = conn.execute("SELECT * FROM players WHERE client_id = ?", (target_client_id,)).fetchone()
+            if not player:
+                raise AdminOperationError("目标玩家不存在，请重新搜索。")
+            before_level = int(row_value(player, "level", 1))
+            before_exp = int(row_value(player, "exp", 0))
+            old_level, new_level = self.core.add_exp_conn(conn, target_client_id, quantity)
+            after_row = conn.execute("SELECT level, exp FROM players WHERE client_id = ?", (target_client_id,)).fetchone()
+            after_level = int(row_value(after_row, "level", new_level))
+            after_exp = int(row_value(after_row, "exp", before_exp + quantity))
+            return {
+                "before": {"level": before_level, "exp": before_exp},
+                "after": {"level": after_level, "exp": after_exp},
             }
 
         if action_type != "grant_item":

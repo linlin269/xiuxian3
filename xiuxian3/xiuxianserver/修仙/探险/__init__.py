@@ -36,6 +36,13 @@ async def ws_exploration_status(client_id: str, message: str) -> None:
     await send_reply(client_id, service.status(client_id), ws_manager, service)
 
 
+@WsMessageHandler.handler(cmd=("放弃感悟", "尝试感悟"), priority=100, block=True)
+async def ws_exploration_breakthrough_choice(client_id: str, message: str) -> None:
+    """结算探险中的羽翼 / 光环感悟。"""
+
+    await send_reply(client_id, service.breakthrough_choice(client_id, message), ws_manager, service)
+
+
 @WsMessageHandler.handler(cmd=("结束探险", "探险结束"), priority=100, block=True)
 async def ws_exploration_claim(client_id: str, message: str) -> None:
     """领取探险结果。"""
