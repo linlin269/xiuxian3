@@ -17,6 +17,7 @@ from ..weapon_core import service as weapon_service
 from ..world_materials import WorldMaterialService
 from ..battle_log_links import battle_log_markdown
 from ..异火.service import service as flame_service
+from ..镇渊诛邪.service import service as zhenyuan_zhuxie_service
 
 
 SECRET_REALM_LOCATIONS = {"太虚秘境"}
@@ -276,6 +277,12 @@ class ExplorationService(CoreService):
         explore_player["y"] = location["y"]
         result = self._precompute(client_id, explore_player)
         started = now()
+        explore_bonus = float(zhenyuan_zhuxie_service.player_bonus(client_id).get("explore_bonus", 0.0))
+        result["duration_seconds"] = zhenyuan_zhuxie_service.apply_time_bonus(
+            self._result_duration_seconds(result),
+            explore_bonus,
+            ENCOUNTER_SECONDS,
+        )
         ready = started + timedelta(seconds=self._result_duration_seconds(result))
         breakthrough_text = ""
         with self.db.transaction() as conn:
@@ -500,6 +507,15 @@ class ExplorationService(CoreService):
                     damage=int(event.get("highest_damage", 0)),
                     weapon_exp=int(event.get("weapon_exp", 0)),
                 )
+                if bool(event.get("win")):
+                    zhenyuan_zhuxie_service.grant_monster_points_conn(
+                        conn,
+                        client_id,
+                        1,
+                        source_name=str(event.get("monster") or "普通怪"),
+                        source_key=str(event.get("monster") or ""),
+                        extra={"location_name": str(record.get("location_name") or "")},
+                    )
             for drop in self._weapon_drops_from_result(result):
                 if not drop:
                     continue

@@ -29,6 +29,7 @@ from ..sect_war import record_sect_merit_conn, sect_direction_bonus_conn
 from ..sql import db
 from ..weapon_core import service as weapon_service
 from ..异火.service import service as flame_service
+from ..镇渊诛邪.service import service as zhenyuan_zhuxie_service
 
 
 SEASONAL_LOW_CONTRIBUTION_FLOORS = {
@@ -699,6 +700,16 @@ class SeasonalBossService(CoreService):
                 damage=int(result.get("highest_damage", damage)),
                 weapon_exp=int(result.get("weapon_exp", 0)),
             )
+            if killed:
+                zhenyuan_zhuxie_service.grant_boss_points_conn(
+                    conn,
+                    client_id,
+                    1,
+                    source_name=str(event["boss_name"]),
+                    source_key=str(event["event_id"]),
+                    source_module="首领",
+                    extra={"location_name": str(event["location_name"]), "weight_type": str(event.get("weight_type") or "")},
+                )
 
         atmosphere = random.choice(load_json(event["atmosphere"], [])) if event["atmosphere"] else event["scene"]
         return self._challenge_log_block(

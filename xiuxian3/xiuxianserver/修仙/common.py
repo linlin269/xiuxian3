@@ -2303,10 +2303,13 @@ class CoreService:
         if physique_def:
             physique_value = int(physique_def["physique_value"])
         bonuses = self.equipment_bonuses_conn(conn, client_id)
-        hp_max = max_hp(level, physique_value, int(bonuses["max_hp_bonus"]))
-        mp_max = max_mp(level, int(bonuses["max_mp_bonus"]))
-        attack_value = base_attack(level)
-        defense_value = defense(level, physique_value, int(bonuses["defense_bonus"]))
+        from .镇渊诛邪.service import service as zhenyuan_zhuxie_service
+
+        zyzx_bonus = zhenyuan_zhuxie_service.player_bonus_conn(conn, client_id)
+        hp_max = max_hp(level, physique_value, int(bonuses["max_hp_bonus"])) + int(zyzx_bonus["hp_bonus"])
+        mp_max = max_mp(level, int(bonuses["max_mp_bonus"])) + int(zyzx_bonus["spirit_bonus"])
+        attack_value = base_attack(level) + int(zyzx_bonus["attack_bonus"])
+        defense_value = defense(level, physique_value, int(bonuses["defense_bonus"])) + int(zyzx_bonus["defense_bonus"])
         conn.execute(
             """
             UPDATE players

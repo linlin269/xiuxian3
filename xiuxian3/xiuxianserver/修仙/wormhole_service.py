@@ -33,6 +33,7 @@ from .sql import db
 from .weapon_core import WeaponCore
 from .world_materials import WorldMaterialService
 from .异火.service import service as flame_service
+from .镇渊诛邪.service import service as zhenyuan_zhuxie_service
 
 BOSS_POOL = (
     ("千刃界游王", "刃影", 0.98),
@@ -309,6 +310,16 @@ class WormholeService(CoreService):
                 damage=int(result.get("highest_damage", damage)),
                 weapon_exp=int(result.get("weapon_exp", 0)),
             )
+            if killed:
+                zhenyuan_zhuxie_service.grant_boss_points_conn(
+                    conn,
+                    client_id,
+                    1,
+                    source_name=str(event["boss_name"]),
+                    source_key=str(event["wormhole_id"]),
+                    source_module="虫洞",
+                    extra={"location_name": str(event["location_name"]), "boss_kind": str(event.get("boss_kind") or "")},
+                )
 
         return self._challenge_log_block(
             title=f"挑战虫洞：{event['boss_name']}",

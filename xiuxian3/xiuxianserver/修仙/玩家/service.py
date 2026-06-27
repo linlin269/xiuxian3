@@ -21,6 +21,7 @@ from ..common import (
     weapon_label_name,
     world_state_for_day,
 )
+from ..镇渊诛邪.service import service as zhenyuan_zhuxie_service
 from ..constants import EQUIPMENT_SLOTS, NEWBIE_GIFT_STONES, REST_FAST_SECONDS, REST_FULL_MINUTES
 from ..rules import rest_recovery_rate, sign_reward
 from ..sect_war import sect_direction_bonus_conn
@@ -63,6 +64,7 @@ class PlayerService(CoreService):
         combat_info = self._current_combat_info(client_id, player, weapon)
         self.refresh_titles(client_id, player)
         growth = self.db.growth_path(client_id)
+        zhenyuan_profile = zhenyuan_zhuxie_service.profile(client_id)
 
         panel = T.panel()
         panel.section("状态")
@@ -107,6 +109,9 @@ class PlayerService(CoreService):
         panel.section("羽翼 / 光环")
         panel.lines(self._growth_profile_lines(growth))
         panel.hr()
+        panel.section("镇渊 / 诛邪")
+        panel.lines(self._zhenyuan_profile_lines(zhenyuan_profile))
+        panel.hr()
         panel.section("今日加成")
         panel.lines(self._daily_bonus_lines(client_id))
         return panel.render() + T.buttons("休息", "结束休息", "地图")
@@ -124,6 +129,7 @@ class PlayerService(CoreService):
         weapon_attack = self.weapon_attack(weapon)
         total_attack = int(player["base_attack"]) + weapon_attack
         combat_info = self._current_combat_info(client_id, player, weapon)
+        zhenyuan_profile = zhenyuan_zhuxie_service.profile(client_id)
         self.refresh_titles(client_id, player)
         growth = self.db.growth_path(client_id)
 
@@ -140,6 +146,7 @@ class PlayerService(CoreService):
         panel.hr()
         panel.line(f"攻击：{total_attack}｜防御：{player['defense']}｜速度：{combat_info['speed']}")
         panel.line(f"技能节奏：{combat_info['skill_tempo']}")
+        panel.line(f"镇渊：{zhenyuan_profile['phase_name']}｜积分：{zhenyuan_profile['points']:,}/{zhenyuan_profile['next_points']:,}")
         panel.line(f"当前武器：{weapon_text}")
         panel.hr()
         panel.line(f"自动用药：{'开启' if player['auto_use_medicine'] else '关闭'}｜战斗日志：{mode_text(player)}")
@@ -322,7 +329,9 @@ class PlayerService(CoreService):
 
         current = now()
         window = self._rest_window_state(player)
-        until = current + timedelta(seconds=window["remaining_seconds"])
+        bonus = zhenyuan_zhuxie_service.player_bonus(client_id)
+        remaining_seconds = zhenyuan_zhuxie_service.apply_time_bonus(window["remaining_seconds"], float(bonus.get("recover_bonus", 0.0)), REST_FAST_SECONDS)
+        until = current + timedelta(seconds=remaining_seconds)
         with self.db.transaction() as conn:
             cursor = conn.execute(
                 """
@@ -348,9 +357,9 @@ class PlayerService(CoreService):
                 return T.hint("当前状态已变化，不能休息。", "发送：修仙信息 查看当前状态后再操作。<修仙信息><休息>")
             conn.execute(
                 "INSERT INTO game_logs (client_id, action, detail, created_at) VALUES (?, '开始休息', ?, ?)",
-                (client_id, f"full_at={ts(until)}, window_elapsed={window['elapsed_seconds']}", ts()),
+                (client_id, f"full_at={ts(until)}, window_elapsed={window['elapsed_seconds']}, recover_bonus={float(bonus.get('recover_bonus', 0.0)):.3f}", ts()),
             )
-        return f"开始休息，满 1 分钟可结算约一半，{REST_FULL_MINUTES} 分钟恢复满；到时发送：结束休息。<结束休息>"
+        return f"开始休息，满 1 分钟可结算约一半，{REST_FULL_MINUTES} 分钟恢复满；镇渊恢复缩短已生效，到时发送：结束休息。<结束休息>"
 
     def end_rest(self, client_id: str) -> str:
         """按已休息时长恢复并退出。"""
@@ -379,20 +388,20 @@ class PlayerService(CoreService):
                 return T.hint(f"至少需要休息 {REST_FAST_SECONDS} 秒，还差 {left} 秒。", "满 1 分钟后再发送：结束休息")
 
             elapsed_seconds = min(REST_FULL_MINUTES * 60, window["elapsed_seconds"] + active_seconds)
-            base_rate = rest_recovery_rate(elapsed_seconds)
-            recover_bonus = float(self.equipment_bonuses_conn(conn, client_id).get("recover_bonus", 0))
+            recover_rate = rest_recovery_rate(elapsed_seconds)
+            equipment_recover_bonus = float(self.equipment_bonuses_conn(conn, client_id).get("recover_bonus", 0))
             sect_recover_bonus = min(0.12, sect_direction_bonus_conn(conn, client_id, "support") * 0.15)
-            recover_bonus += sect_recover_bonus
-            recover_multiplier = max(0.0, 1 + recover_bonus)
-            recover_rate = max(0.0, min(1.0, base_rate * recover_multiplier))
+            extra_recover_bonus = equipment_recover_bonus + sect_recover_bonus
+            recover_multiplier = max(0.0, 1 + extra_recover_bonus)
+            final_recover_rate = max(0.0, min(1.0, recover_rate * recover_multiplier))
             current_hp = int(fresh["hp"])
             current_mp = int(fresh["mp"])
             max_hp = int(fresh["max_hp"])
             max_mp = int(fresh["max_mp"])
-            base_hp = self._rest_recover_value(window["base_hp"], current_hp, max_hp, base_rate)
-            base_mp = self._rest_recover_value(window["base_mp"], current_mp, max_mp, base_rate)
-            hp = self._rest_recover_value(window["base_hp"], current_hp, max_hp, recover_rate)
-            mp = self._rest_recover_value(window["base_mp"], current_mp, max_mp, recover_rate)
+            base_hp = self._rest_recover_value(window["base_hp"], current_hp, max_hp, recover_rate)
+            base_mp = self._rest_recover_value(window["base_mp"], current_mp, max_mp, recover_rate)
+            hp = self._rest_recover_value(window["base_hp"], current_hp, max_hp, final_recover_rate)
+            mp = self._rest_recover_value(window["base_mp"], current_mp, max_mp, final_recover_rate)
             actual_rate = self._actual_rest_recovery_rate(current_hp, current_mp, hp, mp, max_hp, max_mp)
             base_actual_rate = self._actual_rest_recovery_rate(current_hp, current_mp, base_hp, base_mp, max_hp, max_mp)
             cursor = conn.execute(
@@ -417,8 +426,8 @@ class PlayerService(CoreService):
                     client_id,
                     (
                         f"active={active_seconds}, elapsed={elapsed_seconds}, "
-                        f"base_rate={base_rate:.3f}, recover_bonus={recover_bonus:.3f}, sect_recover_bonus={sect_recover_bonus:.3f}, "
-                        f"recover_multiplier={recover_multiplier:.3f}, recover_rate={recover_rate:.3f}, "
+                        f"recover_rate={recover_rate:.3f}, equipment_recover_bonus={equipment_recover_bonus:.3f}, sect_recover_bonus={sect_recover_bonus:.3f}, "
+                        f"recover_multiplier={recover_multiplier:.3f}, final_recover_rate={final_recover_rate:.3f}, "
                         f"base_actual_rate={base_actual_rate:.3f}, actual_rate={actual_rate:.3f}, hp={hp}, mp={mp}"
                     ),
                     ts(),
@@ -708,6 +717,34 @@ class PlayerService(CoreService):
         wing_cd = self._growth_cooldown_text(str(growth.get("wing_cooldown_until") or ""))
         halo_cd = self._growth_cooldown_text(str(growth.get("halo_cooldown_until") or ""))
         return f"羽翼冷却：{wing_cd}｜光环冷却：{halo_cd}"
+
+    def _zhenyuan_profile_lines(self, profile: dict[str, object]) -> list[str]:
+        """生成镇渊/诛邪面板摘要。"""
+
+        phase_name = str(profile.get("phase_name") or "未启镇渊")
+        points = int(profile.get("points") or 0)
+        next_points = int(profile.get("next_points") or 0)
+        zhenyuan_base = profile.get("zhenyuan_base") if isinstance(profile.get("zhenyuan_base"), dict) else {}
+        effective_base = profile.get("effective_base") if isinstance(profile.get("effective_base"), dict) else {}
+        bonuses = profile.get("bonuses") if isinstance(profile.get("bonuses"), dict) else {}
+        zhuxie_stage = int(profile.get("zhuxie_stage") or 0)
+        line1 = f"阶段：{phase_name}｜积分：**{points:,}/{next_points:,}**"
+        if zhuxie_stage > 0:
+            line2 = (
+                f"追加：血量 +**{int(effective_base.get('hp', 0))}**｜防御 +**{int(effective_base.get('defense', 0))}**｜"
+                f"攻击 +**{int(effective_base.get('attack', 0))}**｜精神 +**{int(effective_base.get('spirit', 0))}**"
+            )
+        else:
+            line2 = (
+                f"基础：血量 +**{int(zhenyuan_base.get('hp', 0))}**｜防御 +**{int(zhenyuan_base.get('defense', 0))}**｜"
+                f"攻击 +**{int(zhenyuan_base.get('attack', 0))}**｜精神 +**{int(zhenyuan_base.get('spirit', 0))}**"
+            )
+        line3 = (
+            f"恢复 +**{int(round(float(bonuses.get('recover_bonus', 0.0)) * 100))}%**｜"
+            f"探险 +**{int(round(float(bonuses.get('explore_bonus', 0.0)) * 100))}%**｜"
+            f"黑市折扣 **-{int(round(float(bonuses.get('black_market_discount', 0.0)) * 100))}%**"
+        )
+        return [line1, line2, line3]
 
     @staticmethod
     def _growth_stage_text(stage: int, stage_defs: tuple[dict, ...]) -> str:

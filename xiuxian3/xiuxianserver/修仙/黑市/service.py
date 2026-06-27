@@ -8,6 +8,7 @@ from ..common import CoreService, business_day, split_words, ts
 from ..format_text import T
 from ..rules import money
 from ..sql import db
+from ..镇渊诛邪.service import service as zhenyuan_zhuxie_service
 
 
 BLACK_MARKET_DEFS: tuple[dict[str, Any], ...] = (
@@ -179,7 +180,9 @@ class BlackMarketService(CoreService):
             )
 
         sale_price = int(market_item["sale_price"])
-        total_price = sale_price * quantity
+        discount = float(zhenyuan_zhuxie_service.player_bonus(client_id).get("black_market_discount", 0.0))
+        final_unit_price = zhenyuan_zhuxie_service.discounted_price(sale_price, discount)
+        total_price = final_unit_price * quantity
         with self.db.transaction() as conn:
             if not self.spend_stones_conn(conn, client_id, total_price):
                 return T.hint(
@@ -187,10 +190,10 @@ class BlackMarketService(CoreService):
                     "发送：源库 查看存量，或发送：取出源石 数量。<源库>",
                 )
             self.add_ring_conn(conn, client_id, ring_item_id, quantity)
-            self._record_trade_conn(conn, client_id, "buy", market_item, quantity, sale_price, total_price)
+            self._record_trade_conn(conn, client_id, "buy", market_item, quantity, final_unit_price, total_price)
             conn.execute(
                 "INSERT INTO game_logs (client_id, action, detail, created_at) VALUES (?, '黑市购买', ?, ?)",
-                (client_id, f"item={ring_item_id}, quantity={quantity}, total={total_price}", ts()),
+                (client_id, f"item={ring_item_id}, quantity={quantity}, unit={final_unit_price}, total={total_price}, discount={discount:.3f}", ts()),
             )
         return f"购买成功：{market_item['display_name']} x{quantity}，花费 {money(total_price)}，物品已发入纳戒。"
 

@@ -19,28 +19,12 @@ from ..sql import db
 EXPLORE_FLAME_RANKS = {21, 22, 23}
 BOSS_WORMHOLE_FLAME_RANKS = set(range(2, 24))
 
-# rank 23 权重最大，rank 2 权重最小（指数递减）
-FLAME_RANK_WEIGHTS: dict[int, float] = {}
-for _rank in range(2, 24):
-    FLAME_RANK_WEIGHTS[_rank] = max(0.01, 2.0 ** (23 - _rank) * 0.0001)
-# 归一化到方便理解的量级
-_total_w = sum(FLAME_RANK_WEIGHTS.values())
-for _rank in FLAME_RANK_WEIGHTS:
-    FLAME_RANK_WEIGHTS[_rank] = FLAME_RANK_WEIGHTS[_rank] / _total_w
+EXPLORE_FLAME_TRIGGER_RATE = 0.02
+BOSS_WORMHOLE_FLAME_TRIGGER_RATE = 0.01
 
-EXPLORE_FLAME_WEIGHTS: dict[int, float] = {}
-for _rank in EXPLORE_FLAME_RANKS:
-    EXPLORE_FLAME_WEIGHTS[_rank] = FLAME_RANK_WEIGHTS[_rank]
-_exp_total = sum(EXPLORE_FLAME_WEIGHTS.values())
-for _rank in EXPLORE_FLAME_WEIGHTS:
-    EXPLORE_FLAME_WEIGHTS[_rank] = EXPLORE_FLAME_WEIGHTS[_rank] / _exp_total
-
-BOSS_WORMHOLE_FLAME_WEIGHTS: dict[int, float] = {}
-for _rank in BOSS_WORMHOLE_FLAME_RANKS:
-    BOSS_WORMHOLE_FLAME_WEIGHTS[_rank] = FLAME_RANK_WEIGHTS[_rank]
-_bw_total = sum(BOSS_WORMHOLE_FLAME_WEIGHTS.values())
-for _rank in BOSS_WORMHOLE_FLAME_WEIGHTS:
-    BOSS_WORMHOLE_FLAME_WEIGHTS[_rank] = BOSS_WORMHOLE_FLAME_WEIGHTS[_rank] / _bw_total
+COMPENSATION_ITEM_ID = "shou_hun_dan"
+COMPENSATION_ITEM_NAME = "兽魂丹"
+COMPENSATION_ITEM_QUANTITY = 1
 
 
 class FlameService(CoreService):
@@ -350,7 +334,7 @@ class FlameService(CoreService):
                 panel.line(f"第{row['rank']}名 **{row['name']}**")
 
         panel.hr()
-        panel.line("提示：探险结算有概率获得 rank 21~23 异火；首领和虫洞奖励有概率获得 rank 2~23 异火。")
+        panel.line("提示：探险结算有 2% 概率获得 rank 21~23 异火；首领和虫洞奖励有 1% 概率获得 rank 2~23 异火。")
 
         return panel.render() + T.buttons("异火列表", "异火")
 
@@ -376,25 +360,11 @@ class FlameService(CoreService):
             else:
                 pool_ranks = BOSS_WORMHOLE_FLAME_RANKS
 
-        # 按权重抽一个候选 rank
-        weights = {}
-        for rank in pool_ranks:
-            if source == "explore":
-                weights[rank] = EXPLORE_FLAME_WEIGHTS.get(rank, 0.0)
-            else:
-                weights[rank] = BOSS_WORMHOLE_FLAME_WEIGHTS.get(rank, 0.0)
-        total = sum(weights.values())
-        if total <= 0:
+        candidate_ranks = sorted(pool_ranks)
+        if not candidate_ranks:
             return {"granted": False, "text": "", "compensation": None}
 
-        roll = random.random() * total
-        current = 0.0
-        selected_rank = min(pool_ranks)
-        for rank, weight in sorted(weights.items()):
-            current += weight
-            if roll <= current:
-                selected_rank = rank
-                break
+        selected_rank = random.choice(candidate_ranks)
 
         flame_def = conn.execute(
             "SELECT * FROM flame_defs WHERE rank = ?", (selected_rank,)
@@ -411,13 +381,17 @@ class FlameService(CoreService):
             (client_id,),
         ).fetchone()
         if has_di_yan:
-            # 帝炎合成后不能再获得 rank 2~23
+            # 帝炎合成后不能再获得 rank 2~23，统一补偿 1 颗兽魂丹到纳戒。
+            self.add_ring_conn(conn, client_id, COMPENSATION_ITEM_ID, COMPENSATION_ITEM_QUANTITY)
             return {
                 "granted": False,
                 "text": "",
                 "compensation": {
                     "flame_name": flame_def["name"],
                     "reason": "已有帝炎",
+                    "item_id": COMPENSATION_ITEM_ID,
+                    "item_name": COMPENSATION_ITEM_NAME,
+                    "quantity": COMPENSATION_ITEM_QUANTITY,
                 },
             }
 
@@ -427,12 +401,16 @@ class FlameService(CoreService):
             (client_id, flame_id),
         ).fetchone()
         if existing:
+            self.add_ring_conn(conn, client_id, COMPENSATION_ITEM_ID, COMPENSATION_ITEM_QUANTITY)
             return {
                 "granted": False,
                 "text": "",
                 "compensation": {
                     "flame_name": flame_def["name"],
-                    "reason": "已拥有此异火",
+                    "reason": "已拥有同名异火",
+                    "item_id": COMPENSATION_ITEM_ID,
+                    "item_name": COMPENSATION_ITEM_NAME,
+                    "quantity": COMPENSATION_ITEM_QUANTITY,
                 },
             }
 
@@ -452,18 +430,25 @@ class FlameService(CoreService):
         }
 
     def compensation_text(self, flame_name: str, compensation_item: str) -> str:
-        """生成固定补偿文案。"""
+        """生成统一补偿文案。"""
 
-        return f"本次掉落异火为{flame_name}，您已拥有此异火，本次奖励补偿为{compensation_item}。"
+        item_text = compensation_item.strip() if compensation_item else ""
+        if item_text in {"", "已有帝炎", "已拥有此异火", "已拥有同名异火"}:
+            item_text = f"{COMPENSATION_ITEM_QUANTITY}颗{COMPENSATION_ITEM_NAME}"
+        return f"本次掉落异火为{flame_name}，因无法重复领取，已补偿{item_text}。"
 
     def roll_explore_flame(self, conn, client_id: str) -> dict[str, Any]:
-        """探险结算时尝试掉落异火（rank 21~23）。"""
+        """探险结算时以 2% 概率掉落异火（触发后在 rank 21~23 等概率抽取）。"""
 
+        if random.random() >= EXPLORE_FLAME_TRIGGER_RATE:
+            return {"granted": False, "text": "", "compensation": None}
         return self.try_grant_flame(conn, client_id, "explore", EXPLORE_FLAME_RANKS)
 
     def roll_boss_wormhole_flame(self, conn, client_id: str) -> dict[str, Any]:
-        """首领/虫洞奖励时尝试掉落异火（rank 2~23）。"""
+        """首领/虫洞奖励时以 1% 概率掉落异火（触发后在 rank 2~23 等概率抽取）。"""
 
+        if random.random() >= BOSS_WORMHOLE_FLAME_TRIGGER_RATE:
+            return {"granted": False, "text": "", "compensation": None}
         return self.try_grant_flame(conn, client_id, "boss_wormhole", BOSS_WORMHOLE_FLAME_RANKS)
 
     # ------------------------------------------------------------------ #

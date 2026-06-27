@@ -748,6 +748,8 @@ class XiuxianDB:
             if current_version != SCHEMA_VERSION:
                 if current_version is None and not self._has_existing_tables():
                     pass
+                elif current_version in {2026062201}:
+                    pass
                 else:
                     raise RuntimeError(
                         f"修仙数据库版本不匹配：current={current_version}, target={SCHEMA_VERSION}。"
@@ -1835,6 +1837,42 @@ class XiuxianDB:
                 updated_at TEXT NOT NULL
             );
 
+            CREATE TABLE IF NOT EXISTS player_zhenyuan_zhuxie (
+                client_id TEXT PRIMARY KEY,
+                zhenyuan_stage INTEGER NOT NULL DEFAULT 0,
+                zhuxie_stage INTEGER NOT NULL DEFAULT 0,
+                zhenyuan_points INTEGER NOT NULL DEFAULT 0,
+                zhenyuan_base_hp INTEGER NOT NULL DEFAULT 0,
+                zhenyuan_base_def INTEGER NOT NULL DEFAULT 0,
+                zhenyuan_base_atk INTEGER NOT NULL DEFAULT 0,
+                zhenyuan_base_spirit INTEGER NOT NULL DEFAULT 0,
+                zhenyuan_recovery_bonus REAL NOT NULL DEFAULT 0,
+                zhenyuan_explore_bonus REAL NOT NULL DEFAULT 0,
+                zhenyuan_black_market_discount REAL NOT NULL DEFAULT 0,
+                zhuxie_hp_multiplier REAL NOT NULL DEFAULT 1,
+                zhuxie_def_multiplier REAL NOT NULL DEFAULT 1,
+                zhuxie_atk_multiplier REAL NOT NULL DEFAULT 1,
+                zhuxie_spirit_multiplier REAL NOT NULL DEFAULT 1,
+                zhuxie_recovery_bonus REAL NOT NULL DEFAULT 0,
+                zhuxie_explore_bonus REAL NOT NULL DEFAULT 0,
+                zhuxie_black_market_discount REAL NOT NULL DEFAULT 0,
+                updated_at TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS player_zhenyuan_zhuxie_point_logs (
+                record_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                client_id TEXT NOT NULL,
+                source_type TEXT NOT NULL,
+                source_module TEXT NOT NULL,
+                source_key TEXT NOT NULL DEFAULT '',
+                source_name TEXT NOT NULL DEFAULT '',
+                quantity INTEGER NOT NULL DEFAULT 0,
+                point_ratio REAL NOT NULL DEFAULT 0,
+                point_value INTEGER NOT NULL DEFAULT 0,
+                created_at TEXT NOT NULL,
+                extra TEXT NOT NULL DEFAULT '{}'
+            );
+
             CREATE INDEX IF NOT EXISTS idx_backpack_client ON backpack_items(client_id);
             CREATE UNIQUE INDEX IF NOT EXISTS idx_players_display_name ON players(display_name);
             CREATE INDEX IF NOT EXISTS idx_ring_client ON ring_items(client_id);
@@ -1891,6 +1929,9 @@ class XiuxianDB:
             CREATE INDEX IF NOT EXISTS idx_player_lifetime_stats_key ON player_lifetime_stats(stat_key, stat_value);
             CREATE INDEX IF NOT EXISTS idx_daily_fortunes_day ON daily_fortunes(business_day);
             CREATE INDEX IF NOT EXISTS idx_weapon_legends_owner ON weapon_legends(current_owner_id);
+            CREATE INDEX IF NOT EXISTS idx_player_zhenyuan_points ON player_zhenyuan_zhuxie(zhenyuan_points, updated_at);
+            CREATE INDEX IF NOT EXISTS idx_player_zhenyuan_logs_client ON player_zhenyuan_zhuxie_point_logs(client_id, created_at);
+            CREATE INDEX IF NOT EXISTS idx_player_zhenyuan_logs_source ON player_zhenyuan_zhuxie_point_logs(source_type, source_module, created_at);
             """
         )
         self.conn.commit()
@@ -2521,6 +2562,164 @@ class XiuxianDB:
         if xinjing_spirit_accum is not None:
             fields["xinjing_spirit_accum"] = max(0, int(xinjing_spirit_accum))
         self._update_growth_path_conn(conn, client_id, **fields)
+
+    def ensure_player_zhenyuan_zhuxie(self, client_id: str) -> dict[str, Any]:
+        """确保玩家镇渊诛邪档案存在并返回。"""
+
+        with self.transaction() as conn:
+            row = self.ensure_player_zhenyuan_zhuxie_conn(conn, client_id)
+            return dict(row)
+
+    def zhenyuan_zhuxie_profile(self, client_id: str) -> dict[str, Any]:
+        """读取玩家镇渊诛邪档案；不存在时自动补齐。"""
+
+        return self.ensure_player_zhenyuan_zhuxie(client_id)
+
+    def ensure_player_zhenyuan_zhuxie_conn(self, conn: sqlite3.Connection, client_id: str) -> sqlite3.Row:
+        """事务内确保玩家镇渊诛邪档案存在。"""
+
+        current_ts = ts()
+        conn.execute(
+            """
+            INSERT OR IGNORE INTO player_zhenyuan_zhuxie (
+                client_id,
+                zhenyuan_stage,
+                zhuxie_stage,
+                zhenyuan_points,
+                zhenyuan_base_hp,
+                zhenyuan_base_def,
+                zhenyuan_base_atk,
+                zhenyuan_base_spirit,
+                zhenyuan_recovery_bonus,
+                zhenyuan_explore_bonus,
+                zhenyuan_black_market_discount,
+                zhuxie_hp_multiplier,
+                zhuxie_def_multiplier,
+                zhuxie_atk_multiplier,
+                zhuxie_spirit_multiplier,
+                zhuxie_recovery_bonus,
+                zhuxie_explore_bonus,
+                zhuxie_black_market_discount,
+                updated_at
+            )
+            VALUES (?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, ?)
+            """,
+            (client_id, current_ts),
+        )
+        row = conn.execute(
+            "SELECT * FROM player_zhenyuan_zhuxie WHERE client_id = ?",
+            (client_id,),
+        ).fetchone()
+        assert row is not None
+        return row
+
+    def update_player_zhenyuan_zhuxie_conn(self, conn: sqlite3.Connection, client_id: str, **fields: Any) -> None:
+        """事务内更新玩家镇渊诛邪字段。"""
+
+        if not fields:
+            return
+        self.ensure_player_zhenyuan_zhuxie_conn(conn, client_id)
+        fields["updated_at"] = ts()
+        sets = ", ".join(f"{key} = ?" for key in fields)
+        params = [*fields.values(), client_id]
+        conn.execute(f"UPDATE player_zhenyuan_zhuxie SET {sets} WHERE client_id = ?", params)
+
+    def record_zhenyuan_zhuxie_point_log_conn(
+        self,
+        conn: sqlite3.Connection,
+        client_id: str,
+        *,
+        source_type: str,
+        source_module: str,
+        source_key: str = "",
+        source_name: str = "",
+        quantity: int = 0,
+        point_ratio: float = 0.0,
+        point_value: int = 0,
+        extra: dict[str, Any] | None = None,
+    ) -> int:
+        """事务内记录镇渊诛邪积分来源日志。"""
+
+        cursor = conn.execute(
+            """
+            INSERT INTO player_zhenyuan_zhuxie_point_logs
+            (client_id, source_type, source_module, source_key, source_name, quantity, point_ratio, point_value, created_at, extra)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                client_id,
+                str(source_type),
+                str(source_module),
+                str(source_key),
+                str(source_name),
+                int(quantity),
+                float(point_ratio),
+                int(point_value),
+                ts(),
+                json.dumps(extra or {}, ensure_ascii=False),
+            ),
+        )
+        return int(cursor.lastrowid)
+
+    def add_zhenyuan_zhuxie_points_conn(
+        self,
+        conn: sqlite3.Connection,
+        client_id: str,
+        *,
+        source_type: str,
+        source_module: str,
+        quantity: int,
+        point_ratio: float,
+        source_key: str = "",
+        source_name: str = "",
+        extra: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """事务内按来源为玩家增加镇渊诛邪积分。"""
+
+        self.ensure_player_zhenyuan_zhuxie_conn(conn, client_id)
+        actual_quantity = max(0, int(quantity))
+        actual_ratio = max(0.0, float(point_ratio))
+        point_value = max(0, int(round(actual_quantity * actual_ratio)))
+        if point_value <= 0:
+            row = conn.execute(
+                "SELECT * FROM player_zhenyuan_zhuxie WHERE client_id = ?",
+                (client_id,),
+            ).fetchone()
+            return dict(row) if row else {}
+        conn.execute(
+            "UPDATE player_zhenyuan_zhuxie SET zhenyuan_points = zhenyuan_points + ?, updated_at = ? WHERE client_id = ?",
+            (point_value, ts(), client_id),
+        )
+        self.record_zhenyuan_zhuxie_point_log_conn(
+            conn,
+            client_id,
+            source_type=source_type,
+            source_module=source_module,
+            source_key=source_key,
+            source_name=source_name,
+            quantity=actual_quantity,
+            point_ratio=actual_ratio,
+            point_value=point_value,
+            extra=extra,
+        )
+        row = conn.execute(
+            "SELECT * FROM player_zhenyuan_zhuxie WHERE client_id = ?",
+            (client_id,),
+        ).fetchone()
+        return dict(row) if row else {}
+
+    def zhenyuan_zhuxie_point_logs(self, client_id: str, limit: int = 20) -> list[dict[str, Any]]:
+        """读取玩家最近的镇渊诛邪积分日志。"""
+
+        return self.fetch_all(
+            """
+            SELECT * FROM player_zhenyuan_zhuxie_point_logs
+            WHERE client_id = ?
+            ORDER BY record_id DESC
+            LIMIT ?
+            """,
+            (client_id, max(1, int(limit))),
+        )
 
     def ensure_fixed_equipment(self, client_id: str) -> None:
         """确保玩家装备位存在。"""
