@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 
-from launch import config, lifespan, LOGGING_CONFIG, FastAPIAllowed, FastAPIIncludeRouter
+from launch import LOGGING_CONFIG, FastAPIAllowed, FastAPIIncludeRouter, config, lifespan
 
 
 def create_app():
@@ -9,6 +9,7 @@ def create_app():
 
     uvicorn 使用 factory 模式调用这个函数，避免 reload 父进程提前创建 app。
     HTTP 路由也在这里注册，这样 /docs 生成时能看到完整接口。
+    英灵殿等模块的 WS 注册与定时任务也会在这里统一导入并进入生命周期。
     """
 
     app = FastAPI(

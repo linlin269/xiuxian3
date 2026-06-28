@@ -83,6 +83,16 @@ async def wormhole_log(record_id: int, player: str = Query("", alias="player"), 
     return HTMLResponse(_render_boss_challenge("虫洞", dict(event), dict(record), participant, result, bool(detail)))
 
 
+@router.get(f"{LOG_BASE_PATH}/hall/{{record_id}}", response_class=HTMLResponse)
+async def hall_log(record_id: int, detail: int = 0) -> HTMLResponse:
+    """英灵殿战斗日志。"""
+
+    record = db.fetch_one("SELECT * FROM hall_of_heroes_challenges WHERE challenge_id = ?", (record_id,))
+    if not record:
+        raise HTTPException(status_code=404, detail="hall challenge record not found")
+    return HTMLResponse(_render_hall(dict(record), bool(detail)))
+
+
 def _participant(table: str, key: str, value: int, client_id: str) -> dict[str, Any]:
     """读取指定玩家参与记录；未指定玩家时取伤害最高者。"""
 
@@ -220,6 +230,71 @@ def _render_boss_challenge(
     ]
     battle = _boss_battle_card(kind, boss_label, boss_name, record, result, detail)
     return _layout(f"{kind}战斗日志〔{record_id}〕", f"{kind}战斗日志", "".join(cards), _settlement(settlement), battle, detail)
+
+
+def _render_hall(record: dict[str, Any], detail: bool) -> str:
+    """渲染英灵殿战斗日志。"""
+
+    challenge_id = int(record.get("challenge_id") or 0)
+    npc = _dict_json(record.get("npc_snapshot"))
+    npc_name = str(npc.get("name") or "未知英灵")
+    npc_tier = str(npc.get("tier") or "")
+    npc_kind = str(npc.get("kind") or "")
+    npc_level = int(npc.get("level") or 0)
+    npc_max_hp = int(npc.get("max_hp") or 0)
+    npc_attack = int(npc.get("attack") or 0)
+    npc_defense = int(npc.get("defense") or 0)
+    win = int(record.get("win", 0))
+    actions_raw = load_json(record.get("actions"), [])
+    actions_list = actions_raw if isinstance(actions_raw, list) else []
+    recover = _dict_json(record.get("recover_item_id"))
+    recover_items = recover.get("items") if isinstance(recover.get("items"), list) else []
+    recover_text = "、".join(
+        f"{str(item.get('item_name') or item.get('item_id', '?'))} x{int(item.get('quantity', 0))}"
+        for item in recover_items
+        if isinstance(item, dict)
+    ) if recover_items else "无"
+    tier_label = f"[{npc_tier}]" if npc_tier else ""
+
+    cards = [
+        _metric("记录", f"〔{challenge_id}〕"),
+        _metric("英灵", f"{npc_name} {tier_label} {npc_kind}"),
+        _metric("等级", str(npc_level)),
+        _metric("英灵属性", f"血气 {npc_max_hp}｜攻击 {npc_attack}｜防御 {npc_defense}"),
+        _metric("总伤害", str(record.get("damage_dealt", 0))),
+        _metric("玩家", _player_name(record.get("client_id"))),
+        _metric("时间", str(record.get("challenged_at") or "")),
+    ]
+    settlement = [
+        ("结果", "胜利" if win else "失败"),
+        ("战后状态", f"血气 {record.get('hp_left', 0)}｜精神 {record.get('mp_left', 0)}"),
+        ("镇渊积分", f"+{record.get('zhenyuan_points', 0)}"),
+        ("获得经验", f"+{record.get('exp_gained', 0)}"),
+        ("恢复药品", recover_text),
+    ]
+    detail_html = _actions_html(actions_list, npc_name, detail, "英灵")
+    battle = f"""
+<section class="battle" id="battle-1">
+  <div class="battle-head">
+    <h2>英灵殿挑战｜{escape(npc_name)} {tier_label}</h2>
+    <span class="pill {('win' if win else 'lose')}">{'胜利' if win else '失败'}</span>
+  </div>
+  <div class="battle-grid">
+    {_metric("行动", f"{len(actions_list)} 次")}
+    {_metric("总伤害", str(record.get('damage_dealt', 0)))}
+    {_metric("剩余血气", f"{record.get('hp_left', 0)}")}
+    {_metric("剩余精神", f"{record.get('mp_left', 0)}")}
+  </div>
+  {detail_html}
+</section>"""
+    return _layout(
+        f"英灵殿战斗日志〔{challenge_id}〕",
+        "英灵殿战斗日志",
+        "".join(cards),
+        _settlement(settlement),
+        battle,
+        detail,
+    )
 
 
 def _battle_card(index: int, event: dict[str, Any], detail: bool, enemy_label: str) -> str:

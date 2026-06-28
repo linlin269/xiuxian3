@@ -1932,9 +1932,148 @@ class XiuxianDB:
             CREATE INDEX IF NOT EXISTS idx_player_zhenyuan_points ON player_zhenyuan_zhuxie(zhenyuan_points, updated_at);
             CREATE INDEX IF NOT EXISTS idx_player_zhenyuan_logs_client ON player_zhenyuan_zhuxie_point_logs(client_id, created_at);
             CREATE INDEX IF NOT EXISTS idx_player_zhenyuan_logs_source ON player_zhenyuan_zhuxie_point_logs(source_type, source_module, created_at);
+
+            CREATE TABLE IF NOT EXISTS hall_of_heroes_npcs (
+                npc_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                tier TEXT NOT NULL,
+                level INTEGER NOT NULL,
+                hp INTEGER NOT NULL,
+                max_hp INTEGER NOT NULL,
+                attack INTEGER NOT NULL,
+                defense INTEGER NOT NULL,
+                kind TEXT NOT NULL DEFAULT '傀',
+                defeated INTEGER NOT NULL DEFAULT 0,
+                batch_id TEXT NOT NULL,
+                generated_at TEXT NOT NULL,
+                defeated_at TEXT
+            );
+
+            CREATE TABLE IF NOT EXISTS hall_of_heroes_challenges (
+                challenge_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                npc_id INTEGER NOT NULL,
+                client_id TEXT NOT NULL,
+                win INTEGER NOT NULL DEFAULT 0,
+                damage_dealt INTEGER NOT NULL DEFAULT 0,
+                hp_left INTEGER NOT NULL DEFAULT 0,
+                mp_left INTEGER NOT NULL DEFAULT 0,
+                zhenyuan_points INTEGER NOT NULL DEFAULT 0,
+                exp_gained INTEGER NOT NULL DEFAULT 0,
+                recover_item_id TEXT NOT NULL DEFAULT '{}',
+                recover_quantity INTEGER NOT NULL DEFAULT 0,
+                npc_snapshot TEXT NOT NULL DEFAULT '{}',
+                actions TEXT DEFAULT '',
+                challenged_at TEXT NOT NULL,
+                FOREIGN KEY (client_id) REFERENCES players(client_id),
+                UNIQUE(npc_id, client_id)
+            );
+
+            CREATE TABLE IF NOT EXISTS hall_of_heroes_batches (
+                batch_id TEXT PRIMARY KEY,
+                generated_at TEXT NOT NULL,
+                npc_count INTEGER NOT NULL DEFAULT 10
+            );
             """
         )
+        self._ensure_hall_of_heroes_schema()
         self.conn.commit()
+
+    def _ensure_hall_of_heroes_schema(self) -> None:
+        """补齐英灵殿表的兼容字段。"""
+
+        assert self.conn is not None
+        columns = {
+            row["name"]
+            for row in self.conn.execute("PRAGMA table_info(hall_of_heroes_challenges)").fetchall()
+        }
+        if "npc_snapshot" not in columns:
+            self.conn.execute(
+                "ALTER TABLE hall_of_heroes_challenges ADD COLUMN npc_snapshot TEXT NOT NULL DEFAULT '{}'"
+            )
+
+        foreign_keys = self.conn.execute("PRAGMA foreign_key_list(hall_of_heroes_challenges)").fetchall()
+        if any(str(row["table"]) == "hall_of_heroes_npcs" for row in foreign_keys):
+            self._rebuild_hall_of_heroes_challenges_table()
+            columns = {
+                row["name"]
+                for row in self.conn.execute("PRAGMA table_info(hall_of_heroes_challenges)").fetchall()
+            }
+
+        if "recover_item_id" in columns:
+            self.conn.execute(
+                "UPDATE hall_of_heroes_challenges SET recover_item_id = '{}' WHERE recover_item_id = ''"
+            )
+
+        npc_columns = {
+            row["name"]
+            for row in self.conn.execute("PRAGMA table_info(hall_of_heroes_npcs)").fetchall()
+        }
+        npc_compat_columns = (
+            ("max_hp", "INTEGER NOT NULL DEFAULT 0"),
+            ("attack", "INTEGER NOT NULL DEFAULT 0"),
+            ("defense", "INTEGER NOT NULL DEFAULT 0"),
+            ("kind", "TEXT NOT NULL DEFAULT '傀'"),
+            ("defeated", "INTEGER NOT NULL DEFAULT 0"),
+            ("batch_id", "TEXT NOT NULL DEFAULT ''"),
+            ("generated_at", "TEXT NOT NULL DEFAULT ''"),
+            ("defeated_at", "TEXT"),
+        )
+        for column_name, column_ddl in npc_compat_columns:
+            if column_name not in npc_columns:
+                self.conn.execute(
+                    f"ALTER TABLE hall_of_heroes_npcs ADD COLUMN {column_name} {column_ddl}"
+                )
+
+    def _rebuild_hall_of_heroes_challenges_table(self) -> None:
+        """重建挑战记录表，去掉 NPC 外键以便按生命周期清理当前批次英灵。"""
+
+        assert self.conn is not None
+        self.conn.execute("PRAGMA foreign_keys = OFF")
+        try:
+            self.conn.execute("ALTER TABLE hall_of_heroes_challenges RENAME TO hall_of_heroes_challenges_legacy")
+            self.conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS hall_of_heroes_challenges (
+                    challenge_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    npc_id INTEGER NOT NULL,
+                    client_id TEXT NOT NULL,
+                    win INTEGER NOT NULL DEFAULT 0,
+                    damage_dealt INTEGER NOT NULL DEFAULT 0,
+                    hp_left INTEGER NOT NULL DEFAULT 0,
+                    mp_left INTEGER NOT NULL DEFAULT 0,
+                    zhenyuan_points INTEGER NOT NULL DEFAULT 0,
+                    exp_gained INTEGER NOT NULL DEFAULT 0,
+                    recover_item_id TEXT NOT NULL DEFAULT '{}',
+                    recover_quantity INTEGER NOT NULL DEFAULT 0,
+                    npc_snapshot TEXT NOT NULL DEFAULT '{}',
+                    actions TEXT DEFAULT '',
+                    challenged_at TEXT NOT NULL,
+                    FOREIGN KEY (client_id) REFERENCES players(client_id),
+                    UNIQUE(npc_id, client_id)
+                );
+                """
+            )
+            self.conn.execute(
+                """
+                INSERT INTO hall_of_heroes_challenges (
+                    challenge_id, npc_id, client_id, win, damage_dealt, hp_left, mp_left,
+                    zhenyuan_points, exp_gained, recover_item_id, recover_quantity,
+                    npc_snapshot, actions, challenged_at
+                )
+                SELECT
+                    challenge_id, npc_id, client_id, win, damage_dealt, hp_left, mp_left,
+                    zhenyuan_points, exp_gained,
+                    COALESCE(recover_item_id, '{}'),
+                    recover_quantity,
+                    '{}',
+                    actions,
+                    challenged_at
+                FROM hall_of_heroes_challenges_legacy
+                """
+            )
+            self.conn.execute("DROP TABLE hall_of_heroes_challenges_legacy")
+        finally:
+            self.conn.execute("PRAGMA foreign_keys = ON")
 
     def _seed_world_locations(self) -> None:
         """写入命名世界点位；空地不入库，后续洞府/地皮按坐标稀疏占用。"""

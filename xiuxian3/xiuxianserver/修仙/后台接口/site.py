@@ -365,6 +365,18 @@ async def api_refresh(request: Request) -> dict[str, Any]:
     return {"ok": True, "bootstrap": service.bootstrap_status(), "admin": _current_admin(request)}
 
 
+@router.post("/xiuxian/admin/api/hall-of-heroes/refresh")
+async def api_hall_of_heroes_refresh(request: Request) -> JSONResponse:
+    """手动刷新英灵殿 NPC。"""
+
+    _require_admin(request)
+    try:
+        message = service.refresh_hall_of_heroes_npcs()
+    except Exception as exc:
+        return JSONResponse({"ok": False, "message": str(exc)}, status_code=400)
+    return JSONResponse({"ok": True, "message": message})
+
+
 @router.post("/xiuxian/admin/api/bootstrap/check")
 async def api_bootstrap_check(request: Request) -> dict[str, Any]:
     """检查初始化状态。"""
@@ -569,6 +581,7 @@ def _render_dashboard(admin: dict[str, Any], status: dict[str, Any], *, active_t
       </div>
       <div class="toolbar-group">
         <button type="button" class="ghost" onclick="loadAllData()">刷新数据</button>
+        <button type="button" class="ghost" onclick="refreshHallOfHeroes()">刷新英灵殿NPC</button>
         <button type="button" class="danger" onclick="logout()">退出登录</button>
       </div>
     </section>
@@ -707,6 +720,7 @@ async function viewOperation(operationId){try{const data=await fetchJson(`/xiuxi
 async function loadOperations(dateFrom,dateTo){const params=new URLSearchParams({limit:'20'});if(dateFrom)params.set('date_from',dateFrom);if(dateTo)params.set('date_to',dateTo);const data=await fetchJson(`/xiuxian/admin/api/operations?${params}`);renderOperations(data.items||[]);}
 async function loadAuditLogs(dateFrom,dateTo){const params=new URLSearchParams({limit:'20'});if(dateFrom)params.set('date_from',dateFrom);if(dateTo)params.set('date_to',dateTo);const data=await fetchJson(`/xiuxian/admin/api/audit-logs?${params}`);renderAuditLogs(data.items||[]);}
 async function queryRecords(){const recordType=fieldValue('record-type');const dateFrom=fieldValue('date-from');const dateTo=fieldValue('date-to');const box=qs('record-results');if(box){box.className='table-list empty-state';box.textContent='正在查询…';}try{if(recordType==='audit-logs'){await loadAuditLogs(dateFrom,dateTo);}else{await loadOperations(dateFrom,dateTo);}showBanner('查询完成。','success');}catch(error){if(box){box.className='table-list empty-state';box.textContent=error.message||String(error);}showBanner(error.message||String(error),'error');}}
+async function refreshHallOfHeroes(){try{showBanner('正在刷新英灵殿 NPC…','info');const data=await fetchJson('/xiuxian/admin/api/hall-of-heroes/refresh',{method:'POST',body:'{}'});showBanner(data.message||'英灵殿 NPC 已刷新。','success');}catch(error){showBanner(error.message||String(error),'error');}}
 async function loadAllData(){const target=fieldValue('target-player');if(target)await loadPlayerDetail(target);showBanner('数据已刷新。','success');}
 async function logout(){try{const data=await fetchJson('/xiuxian/admin/api/logout',{method:'POST',body:'{}'});showBanner(data.message||'已退出登录。','success');setTimeout(()=>window.location.href=data.redirect_to||'/xiuxian/admin/login',200);}catch(error){showBanner(error.message||String(error),'error');}}
 document.addEventListener('DOMContentLoaded',()=>{const requestId=qs('request-id');if(requestId)requestId.value=generateRequestId();syncActionForm();const actionType=qs('action-type');if(actionType)actionType.addEventListener('change',syncActionForm);const playerQuery=qs('player-query');if(playerQuery)playerQuery.addEventListener('keydown',(event)=>{if(event.key==='Enter'){event.preventDefault();searchPlayers();}});const itemQuery=qs('item-query');if(itemQuery)itemQuery.addEventListener('keydown',(event)=>{if(event.key==='Enter'){event.preventDefault();searchItems();}});if(INITIAL.active_tab==='operations')setTimeout(()=>{scrollToCard('records-card');queryRecords();},120);});

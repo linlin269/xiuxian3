@@ -29,6 +29,7 @@ _include_child_router(router, "修仙帮助")
 _include_child_router(router, "战斗日志")
 _include_child_router(router, "黑市")
 _include_child_router(router, "镇渊诛邪")
+_include_child_router(router, "英灵殿")
 _include_child_router(router, "羽翼")
 _include_child_router(router, "光环")
 

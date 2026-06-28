@@ -215,6 +215,13 @@ class AdminBackendService:
 
         self.log_db.close()
 
+    def refresh_hall_of_heroes_npcs(self) -> str:
+        """手动刷新英灵殿 NPC。"""
+
+        from ..英灵殿.service import service as hall_of_heroes_service
+
+        return hall_of_heroes_service.refresh_npcs()
+
     def ensure_bootstrap_token(self) -> str:
         """确保一次性初始化密钥在数据库和文本文件里同步存在。"""
 

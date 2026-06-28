@@ -330,7 +330,9 @@ class PlayerService(CoreService):
         current = now()
         window = self._rest_window_state(player)
         bonus = zhenyuan_zhuxie_service.player_bonus(client_id)
-        remaining_seconds = zhenyuan_zhuxie_service.apply_time_bonus(window["remaining_seconds"], float(bonus.get("recover_bonus", 0.0)), REST_FAST_SECONDS)
+        recover_bonus = float(bonus.get("recover_bonus", 0.0))
+        has_zhenyuan_bonus = int(bonus.get("hp_bonus", 0)) > 0 or int(bonus.get("defense_bonus", 0)) > 0 or int(bonus.get("attack_bonus", 0)) > 0 or int(bonus.get("spirit_bonus", 0)) > 0 or recover_bonus > 0
+        remaining_seconds = zhenyuan_zhuxie_service.apply_time_bonus(window["remaining_seconds"], recover_bonus, REST_FAST_SECONDS)
         until = current + timedelta(seconds=remaining_seconds)
         with self.db.transaction() as conn:
             cursor = conn.execute(
@@ -357,9 +359,10 @@ class PlayerService(CoreService):
                 return T.hint("当前状态已变化，不能休息。", "发送：修仙信息 查看当前状态后再操作。<修仙信息><休息>")
             conn.execute(
                 "INSERT INTO game_logs (client_id, action, detail, created_at) VALUES (?, '开始休息', ?, ?)",
-                (client_id, f"full_at={ts(until)}, window_elapsed={window['elapsed_seconds']}, recover_bonus={float(bonus.get('recover_bonus', 0.0)):.3f}", ts()),
+                (client_id, f"full_at={ts(until)}, window_elapsed={window['elapsed_seconds']}, recover_bonus={recover_bonus:.3f}", ts()),
             )
-        return f"开始休息，满 1 分钟可结算约一半，{REST_FULL_MINUTES} 分钟恢复满；镇渊恢复缩短已生效，到时发送：结束休息。<结束休息>"
+        tip = "；镇渊恢复缩短已生效" if has_zhenyuan_bonus and recover_bonus > 0 else ""
+        return f"开始休息，满 1 分钟可结算约一半，{REST_FULL_MINUTES} 分钟恢复满{tip}。<结束休息>"
 
     def end_rest(self, client_id: str) -> str:
         """按已休息时长恢复并退出。"""
